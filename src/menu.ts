@@ -48,6 +48,13 @@ export default class MenuBuilder {
             this.mainWindow.webContents.inspectElement(x, y);
           },
         },
+        {
+          label: 'Toggle Dev',
+          accelerator: 'F12',
+          click: () => {
+            this.mainWindow.webContents.toggleDevTools();
+          }
+        }
       ]).popup({ window: this.mainWindow });
     });
   }

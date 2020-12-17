@@ -73,10 +73,13 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      // devTools: false,
       nodeIntegration: true,
+      enableRemoteModule: true
     },
+    frame: false,
+    titleBarStyle: 'hidden',
   });
-
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   // @TODO: Use 'ready-to-show' event
@@ -99,6 +102,7 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+  mainWindow.setMenuBarVisibility(false);
 
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {

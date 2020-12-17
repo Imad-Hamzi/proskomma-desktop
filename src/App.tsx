@@ -1,50 +1,76 @@
-import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import icon from '../assets/icon.svg';
+import React, { Fragment, useState, useEffect } from 'react';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import TitleBar from 'frameless-titlebar';
+import { remote } from 'electron';
+import { ProsKomma } from 'proskomma';
 
-const Hello = () => {
-  return (
-    <div>
-      <div className="Hello">
-        <img width="200px" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
-  );
-};
+import Footer from './footer';
+import Home from './home';
+import Import from './import';
+import icon from '../assets/icons/48x48.ico'
+
+const pk = new ProsKomma();
+const currentWindow = remote.getCurrentWindow();
 
 export default function App() {
+  const [maximized, setMaximized] = useState(currentWindow.isMaximized());
+  useEffect(() => {
+    const onMaximized = () => setMaximized(true);
+    const onRestore = () => setMaximized(false);
+    currentWindow.on("maximize", onMaximized);
+    currentWindow.on("unmaximize", onRestore);
+    return () => {
+      currentWindow.removeListener("maximize", onMaximized);
+      currentWindow.removeListener("unmaximize", onRestore);
+    };
+  }, []);
+
+  const handleMaximize = () => {
+    if (maximized) {
+      currentWindow.restore();
+    } else {
+      currentWindow.maximize();
+    }
+  };
+
   return (
-    <Router>
-      <Switch>
-        <Route path="/" component={Hello} />
-      </Switch>
-    </Router>
+    <>
+      <TitleBar
+        title="Proskomma Desktop"
+        iconSrc={icon}
+        currentWindow={currentWindow}
+        onMaximize={handleMaximize}
+        onDoubleClick={handleMaximize}
+        onMinimize={() => currentWindow.minimize()}
+        onClose={() => currentWindow.close()}
+        maximized={maximized}
+      />
+      <Tabs defaultFocus className="top_tabs">
+        <TabList>
+          <Tab>Home</Tab>
+          <Tab>Import</Tab>
+          <Tab>Browse</Tab>
+          <Tab>Search</Tab>
+          <Tab>Export</Tab>
+        </TabList>
+        <TabPanel>
+          <Home pk={pk} />
+        </TabPanel>
+        <TabPanel>
+          <Import />
+        </TabPanel>
+        <TabPanel>
+          <div className="content">Browse Not Implemented</div>
+        </TabPanel>
+        <TabPanel>
+          <div className="content">Search Not Implemented</div>
+        </TabPanel>
+        <TabPanel>
+          <div className="content">Export Not Implemented</div>
+        </TabPanel>
+      </Tabs>
+      <Footer />
+    </>
   );
 }
