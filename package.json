@@ -252,6 +252,7 @@
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
     "frameless-titlebar": "^2.1.4",
+    "fs-extra": "^9.0.1",
     "history": "^5.0.0",
     "proskomma": "^0.1.26",
     "react": "^17.0.1",
