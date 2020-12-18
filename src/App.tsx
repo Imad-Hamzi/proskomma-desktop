@@ -58,7 +58,7 @@ export default function App() {
           <Home pk={pk} />
         </TabPanel>
         <TabPanel>
-          <Import />
+          <Import pk={pk} />
         </TabPanel>
         <TabPanel>
           <div className="content">Browse Not Implemented</div>
