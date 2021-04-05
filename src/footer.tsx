@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer>
       <div className="footer_content">
-        {'Part of the '}
+        {'Chaliki is part of the '}
         <button
           type="button"
           className="footer_inline_link"

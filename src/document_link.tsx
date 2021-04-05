@@ -2,14 +2,16 @@ import React from 'react';
 
 const DocumentLink = (props) => {
   return (
-    <div
-      onClick={(ev) => {
-        console.log(props.docSet.id, props.doc.bookCode);
-        props.setTabIndex(1);
-      }}
-    >
-      {props.doc.title}
-    </div>
+    <>
+      <span
+        onClick={() => {
+          props.state.selectedDocument.set(props.doc.id);
+          props.state.tabIndex.set(1);
+        }}
+      >
+        {props.doc.title}
+      </span>
+    </>
   );
 };
 
