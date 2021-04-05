@@ -1,28 +1,34 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import React, {useEffect, useState} from 'react';
+import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import TitleBar from 'frameless-titlebar';
-import { remote } from 'electron';
-import { ProsKomma } from 'proskomma';
+import {remote} from 'electron';
+import {Proskomma} from 'proskomma';
+import fse from 'fs-extra';
+import path from 'path';
 
 import Footer from './footer';
 import Home from './home';
-import Import from './import';
-import icon from '../assets/icons/48x48.ico'
+// import Import from './import';
+import icon from '../assets/icons/48x48.ico';
 
-const pk = new ProsKomma();
+const pk = new Proskomma();
+let timeToLoad = Date.now();
+pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/ult_nt.json')));
+timeToLoad = Date.now() - timeToLoad;
 const currentWindow = remote.getCurrentWindow();
 
 export default function App() {
   const [maximized, setMaximized] = useState(currentWindow.isMaximized());
+  const [tabIndex, setTabIndex] = useState(0);
   useEffect(() => {
     const onMaximized = () => setMaximized(true);
     const onRestore = () => setMaximized(false);
-    currentWindow.on("maximize", onMaximized);
-    currentWindow.on("unmaximize", onRestore);
+    currentWindow.on('maximize', onMaximized);
+    currentWindow.on('unmaximize', onRestore);
     return () => {
-      currentWindow.removeListener("maximize", onMaximized);
-      currentWindow.removeListener("unmaximize", onRestore);
+      currentWindow.removeListener('maximize', onMaximized);
+      currentWindow.removeListener('unmaximize', onRestore);
     };
   }, []);
 
@@ -35,7 +41,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <React.Fragment>
       <TitleBar
         title="Proskomma Desktop"
         iconSrc={icon}
@@ -46,19 +52,18 @@ export default function App() {
         onClose={() => currentWindow.close()}
         maximized={maximized}
       />
-      <Tabs defaultFocus className="top_tabs">
+      <Tabs
+        selectedIndex={tabIndex}
+        onSelect={index => setTabIndex(index)}
+        className="top_tabs"
+      >
         <TabList>
           <Tab>Home</Tab>
-          <Tab>Import</Tab>
           <Tab>Browse</Tab>
           <Tab>Search</Tab>
-          <Tab>Export</Tab>
         </TabList>
         <TabPanel>
-          <Home pk={pk} />
-        </TabPanel>
-        <TabPanel>
-          <Import pk={pk} />
+          <Home pk={pk} timeToLoad={timeToLoad} setTabIndex={setTabIndex}/>
         </TabPanel>
         <TabPanel>
           <div className="content">Browse Not Implemented</div>
@@ -66,11 +71,9 @@ export default function App() {
         <TabPanel>
           <div className="content">Search Not Implemented</div>
         </TabPanel>
-        <TabPanel>
-          <div className="content">Export Not Implemented</div>
-        </TabPanel>
       </Tabs>
-      <Footer />
-    </>
-  );
+      <Footer/>
+    </React.Fragment>
+  )
+    ;
 }
