@@ -25,6 +25,7 @@ export default function App() {
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedDocSet, setSelectedDocSet] = useState('');
   const [selectedDocument, setSelectedDocument] = useState('');
+  const [savedQueries, setSavedQueries] = React.useState([]);
   const state = {
     tabIndex: {
       get: tabIndex,
@@ -36,7 +37,11 @@ export default function App() {
     },
     selectedDocument: {
       get: selectedDocument,
-      set: setSelectedDocument,
+      set: setSelectedDocument,     
+    },
+    savedQueries : {
+      get: savedQueries,
+      set: setSavedQueries,
     },
   };
   useEffect(() => {
@@ -95,7 +100,7 @@ export default function App() {
           <div className="content">Search Not Implemented</div>
         </TabPanel>
         <TabPanel>
-          <PkQuery pk={pk}/>
+          <PkQuery pk={pk} state={state}/>
         </TabPanel>
       </Tabs>
       <Footer/>
