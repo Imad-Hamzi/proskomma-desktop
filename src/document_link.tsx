@@ -6,6 +6,7 @@ const DocumentLink = (props) => {
       <button
         onClick={() => {
           props.state.selectedDocument.set(props.doc.id);
+          props.state.selectedBook.set(props.doc.bookCode);
           props.state.tabIndex.set(1);
         }}
       >

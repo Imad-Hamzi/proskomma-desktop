@@ -26,6 +26,9 @@ export default function App() {
   const [selectedDocSet, setSelectedDocSet] = useState('');
   const [selectedDocument, setSelectedDocument] = useState('');
   const [savedQueries, setSavedQueries] = React.useState([]);
+  const [selectedBook, setSelectedBook] = React.useState('MRK');
+  const [selectedChapter, setSelectedChapter] = React.useState('1');
+  const [selectedVerse, setSelectedVerse] = React.useState('1');
   const state = {
     tabIndex: {
       get: tabIndex,
@@ -39,9 +42,21 @@ export default function App() {
       get: selectedDocument,
       set: setSelectedDocument,
     },
-    savedQueries : {
+    savedQueries: {
       get: savedQueries,
       set: setSavedQueries,
+    },
+    selectedBook: {
+      get: selectedBook,
+      set: setSelectedBook,
+    },
+    selectedChapter: {
+      get: selectedChapter,
+      set: setSelectedChapter,
+    },
+    selectedVerse: {
+      get: selectedVerse,
+      set: setSelectedVerse,
     },
   };
   useEffect(() => {
