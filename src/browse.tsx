@@ -24,7 +24,7 @@ const Browse = (props) => {
   }, []);
   return (
     <div className="content">{
-      !result.data ?
+      !result.data || !result.data.document ?
         <div>No document selected</div>
         :
         <>
