@@ -37,7 +37,7 @@ export default function App() {
     },
     selectedDocument: {
       get: selectedDocument,
-      set: setSelectedDocument,     
+      set: setSelectedDocument,
     },
     savedQueries : {
       get: savedQueries,
@@ -100,7 +100,10 @@ export default function App() {
           <div className="content">Search Not Implemented</div>
         </TabPanel>
         <TabPanel>
-          <PkQuery pk={pk} state={state}/>
+          <PkQuery
+            pk={pk}
+            state={state}
+          />
         </TabPanel>
       </Tabs>
       <Footer/>

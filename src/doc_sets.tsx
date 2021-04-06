@@ -2,7 +2,7 @@ import React from 'react';
 import DocSetButton from './docset_button';
 import DocumentLink from './document_link';
 
-const Home = (props) => {
+const DocSets = (props) => {
   const [result, setResult] = React.useState({});
   const homeQuery =
     '{' +
@@ -95,4 +95,4 @@ const Home = (props) => {
     </div>
   );
 };
-export default Home;
+export default DocSets;

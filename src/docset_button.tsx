@@ -2,14 +2,14 @@ import React from 'react';
 
 const DocSetButton = (props) => {
   return (
-    <span
+    <button
       onClick={() => {
         props.state.selectedDocSet.set(props.docSet.id);
         props.state.selectedDocument.set('');
       }}
     >
       {props.docSet.id}
-    </span>
+    </button>
   );
 };
 
