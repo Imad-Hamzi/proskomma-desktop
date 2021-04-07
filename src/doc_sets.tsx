@@ -32,7 +32,7 @@ const DocSets = (props) => {
         (ds) => ds.id === props.state.selectedDocSet.get
       )[0];
   return (
-    <div className="content">
+    <div className="content scrollableTabPanel">
       <div>
         <i>
           Click in Window, then F12, to Toggle Dev Tools (Scary Output to the

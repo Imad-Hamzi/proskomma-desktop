@@ -21,7 +21,7 @@ const PkQuery = (props) => {
     doQuery();
   }, [query]);
   return (
-    <div className="content">
+    <div className="content scrollableTabPanel">
       {!result ? (
         <div>No Result</div>
       ) : (
@@ -33,10 +33,10 @@ const PkQuery = (props) => {
             value={query}
           />
 
-          <div       
+          <div
             onClick={() => {
             console.log('Saving');
-            props.state.savedQueries.set(  
+            props.state.savedQueries.set(
               Array.from(new Set([...props.state.savedQueries.get, query ]))
               );
             console.log(props.state.savedQueries.get);
@@ -48,7 +48,7 @@ const PkQuery = (props) => {
           <ul>
             { [...props.state.savedQueries.get.entries()]
             .map(
-              sq => 
+              sq =>
                 <li key={sq[0]} onClick={() => {
                   console.log('Clicking');
                   setQuery(sq[1]);

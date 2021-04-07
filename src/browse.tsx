@@ -110,7 +110,7 @@ const Browse = (props) => {
         break;
     }
     return (
-      <div className="content">
+      <div className="content scrollableTabPanel">
         <div>
           <BrowseModeSwitcher
             renderMode={renderMode}

@@ -6,7 +6,8 @@
 
 body {
   position: relative;
-  height: 100vh;
+  height: 800px;
+  width: 1000px;
   font-family: sans-serif;
   overflow-y: hidden;
   margin: 0;
@@ -108,4 +109,11 @@ button.footer_inline_link {
 
 .react-tabs__tab-panel--selected {
   display: block;
+}
+
+div.scrollableTabPanel {
+  height: 600px;
+  overflow-y: auto;
+  width: 950px;
+  overflow-x: auto;
 }
