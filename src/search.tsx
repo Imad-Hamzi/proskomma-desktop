@@ -7,11 +7,12 @@ const simpleSearchQueryTemplate =
   '       bookCode: header(id: "bookCode")' +
   '       title: header(id: "toc2")' +
   '       mainSequence {' +
-  '         blocks(withChars: ["Judas"]) {' +
+  '         blocks(withMatchingChars: ["mother"]) {' +
   '           scopeLabels tokens { payload } text' +
   '         }' +
   '       }' +
   '    }' +
+  '    motherMatches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:"mother") { matched }' +
   '  }' +
   '}';
 
@@ -26,12 +27,13 @@ const Search = (props) => {
         );
         const res = await props.pk.gqlQuery(browseQuery);
         setResult(res);
-        // console.log(browseQuery, JSON.stringify(res));
+        console.log(browseQuery, JSON.stringify(res));
       }
     };
     doQuery();
   }, [props.state.selectedDocSet]);
   if (result.data && result.data.docSet && result.data.docSet.documents) {
+    const matches = result.data.docSet.motherMatches.map(m => m.matched);
     return (
       <div className="content scrollableTabPanel">
         {result.data.docSet.documents
@@ -50,9 +52,7 @@ const Search = (props) => {
                         .join(', ')}
                     </div>
                     <div>
-                      {b.tokens.map((t) =>
-                        t.payload === 'Judas' ? <b>{t.payload}</b> : t.payload
-                      )}
+                      {b.tokens.map(t => matches.includes(t.payload) ? <b>{t.payload}</b> : t.payload)}
                     </div>
                   </li>
                 ))}
