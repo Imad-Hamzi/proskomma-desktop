@@ -62,7 +62,7 @@ const Browse = (props) => {
       }
     };
     doQuery();
-  }, [props.state.selectedBook.get, renderMode]);
+  }, [props.state.selectedDocSet.get, props.state.selectedBook.get, renderMode]);
   if (result.data && result.data.documents) {
     let scriptureTitle;
     let scriptureText;
