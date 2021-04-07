@@ -75,9 +75,11 @@ const Browse = (props) => {
           </h3>
         );
         scriptureText =
-          'cv' in result.data.documents[0] ?
+          'cv' in result.data.documents[0] ? (
             <p>{result.data.documents[0].cv[0].text}</p>
-            : '';
+          ) : (
+            ''
+          );
         break;
       case 'chapter':
         scriptureTitle = (
@@ -86,9 +88,11 @@ const Browse = (props) => {
           </h3>
         );
         scriptureText =
-          'cv' in result.data.documents[0] ?
+          'cv' in result.data.documents[0] ? (
             <p>{result.data.documents[0].cv[0].text}</p>
-            : '';
+          ) : (
+            ''
+          );
         break;
       case 'blocks':
         scriptureTitle = (
@@ -98,8 +102,10 @@ const Browse = (props) => {
           </h3>
         );
         scriptureText =
-          'mainSequence' in result.data.documents[0] ?
-            result.data.documents[0].mainSequence.blocks.map(b => <p>{b.text}</p>)
+          'mainSequence' in result.data.documents[0]
+            ? [
+                ...result.data.documents[0].mainSequence.blocks.entries(),
+              ].map((b) => <p key={b[0]}>{b[1].text}</p>)
             : '';
         break;
     }

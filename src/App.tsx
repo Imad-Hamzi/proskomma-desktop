@@ -10,6 +10,7 @@ import path from 'path';
 import Footer from './footer';
 import DocSets from './doc_sets';
 import Browse from './browse';
+import Search from './search';
 import PkQuery from './pk_query';
 // import Import from './import';
 import icon from '../assets/icons/48x48.ico';
@@ -112,7 +113,7 @@ export default function App() {
           <Browse pk={pk} state={state}/>
         </TabPanel>
         <TabPanel>
-          <div className="content">Search Not Implemented</div>
+          <Search pk={pk} state={state}/>
         </TabPanel>
         <TabPanel>
           <PkQuery
