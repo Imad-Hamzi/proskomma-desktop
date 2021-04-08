@@ -7,12 +7,12 @@ const simpleSearchQueryTemplate =
   '       bookCode: header(id: "bookCode")' +
   '       title: header(id: "toc2")' +
   '       mainSequence {' +
-  '         blocks(withMatchingChars: ["mother"]) {' +
+  '         blocks(withMatchingChars: ["""wi[fv]e"""]) {' +
   '           scopeLabels tokens { payload } text' +
   '         }' +
   '       }' +
   '    }' +
-  '    motherMatches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:"mother") { matched }' +
+  '    wifeMatches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:"""wi[fv]e""") { matched }' +
   '  }' +
   '}';
 
@@ -33,7 +33,7 @@ const Search = (props) => {
     doQuery();
   }, [props.state.selectedDocSet]);
   if (result.data && result.data.docSet && result.data.docSet.documents) {
-    const matches = result.data.docSet.motherMatches.map(m => m.matched);
+    const matches = result.data.docSet.wifeMatches.map(m => m.matched);
     return (
       <div className="content scrollableTabPanel">
         {result.data.docSet.documents
