@@ -17,10 +17,14 @@ import icon from '../assets/icons/48x48.ico';
 
 const pk = new UWProskomma();
 let timeToLoad = Date.now();
-pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ult_pkserialized.json')));
-pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ust_pkserialized.json')));
-pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_hbo_uhb_pkserialized.json')));
-pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_grc_ugnt_pkserialized.json')));
+try {
+  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ult_pkserialized.json')));
+  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ust_pkserialized.json')));
+  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_hbo_uhb_pkserialized.json')));
+  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_grc_ugnt_pkserialized.json')));
+} catch (err) {
+  window.close();
+}
 timeToLoad = Date.now() - timeToLoad;
 const currentWindow = remote.getCurrentWindow();
 
