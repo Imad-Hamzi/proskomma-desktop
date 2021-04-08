@@ -2,118 +2,118 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
 body {
-  position: relative;
-  height: 800px;
-  width: 1000px;
-  font-family: sans-serif;
-  overflow-y: hidden;
-  margin: 0;
+    position: relative;
+    height: 800px;
+    width: 1000px;
+    font-family: sans-serif;
+    overflow-y: hidden;
+    margin: 0;
 }
 
 .top_tabs {
-  position: absolute;
-  top: 2em;
-  width: 100%;
-  box-sizing: border-box;
+    position: absolute;
+    top: 2em;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .content {
-  position: absolute;
-  top: 4em;
-  bottom: 3em;
-  width: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
-  box-sizing: border-box;
+    /* position: absolute; */
+    top: 4em;
+    bottom: 3em;
+    width: 100%;
+    padding-left: 1em;
+    padding-right: 1em;
+    box-sizing: border-box;
 }
 
 footer {
-  text-align: center;
-  width: 100%;
-  font-size: x-small;
-  position: absolute;
-  background-color: #EEE;
-  bottom: 0;
-  height: 3em;
+    text-align: center;
+    width: 100%;
+    font-size: x-small;
+    position: absolute;
+    background-color: #EEE;
+    bottom: 0;
+    height: 3em;
 }
 
 .footer_content {
-  padding: 1em
+    padding: 1em
 }
 
 button.footer_inline_link {
-  background: none!important;
-  border: none;
-  padding: 0!important;
-  font-size: x-small;
-  color: #069;
-  text-decoration: underline;
-  cursor: pointer;
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    font-size: x-small;
+    color: #069;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .react-tabs {
-  -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .react-tabs__tab-list {
-  border-bottom: 1px solid #aaa;
-  margin: 0 0 10px;
-  padding: 0;
+    border-bottom: 1px solid #aaa;
+    margin: 0 0 10px;
+    padding: 0;
 }
 
 .react-tabs__tab {
-  display: inline-block;
-  border: 1px solid transparent;
-  border-bottom: none;
-  bottom: -1px;
-  position: relative;
-  list-style: none;
-  padding: 6px 12px;
-  cursor: pointer;
+    display: inline-block;
+    border: 1px solid transparent;
+    border-bottom: none;
+    bottom: -1px;
+    position: relative;
+    list-style: none;
+    padding: 6px 12px;
+    cursor: pointer;
 }
 
 .react-tabs__tab--selected {
-  background: #fff;
-  border-color: #aaa;
-  color: black;
-  border-radius: 10px 10px 0 0;
+    background: #fff;
+    border-color: #aaa;
+    color: black;
+    border-radius: 10px 10px 0 0;
 }
 
 .react-tabs__tab--disabled {
-  color: GrayText;
-  cursor: default;
+    color: GrayText;
+    cursor: default;
 }
 
 .react-tabs__tab:focus {
-  box-shadow: 0 0 5px hsl(208, 99%, 50%);
-  border-color: hsl(208, 99%, 50%);
-  outline: none;
+    box-shadow: 0 0 5px hsl(208, 99%, 50%);
+    border-color: hsl(208, 99%, 50%);
+    outline: none;
 }
 
 .react-tabs__tab:focus:after {
-  content: "";
-  position: absolute;
-  height: 5px;
-  left: -4px;
-  right: -4px;
-  bottom: -5px;
-  background: #fff;
+    content: "";
+    position: absolute;
+    height: 5px;
+    left: -4px;
+    right: -4px;
+    bottom: -5px;
+    background: #fff;
 }
 
 .react-tabs__tab-panel {
-  display: none;
+    display: none;
 }
 
 .react-tabs__tab-panel--selected {
-  display: block;
+    display: block;
 }
 
 div.scrollableTabPanel {
-  height: 600px;
-  overflow-y: auto;
-  width: 950px;
-  overflow-x: auto;
+    height: 600px;
+    overflow-y: auto;
+    width: 950px;
+    overflow-x: auto;
 }
