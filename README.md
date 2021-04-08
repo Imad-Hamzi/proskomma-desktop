@@ -1,3 +1,21 @@
+# Proskomma Desktop
+
+## A Proskomma-aware Electron App
+
+### Installation
+
+You need to unzip the translation data before running.
+
+```
+cd proskomma-desktop/data
+unzip uW_translations.zip
+cd ..
+yarn add
+yarn start
+```
+
+# Electron React Boilerplate README...
+
 <img src=".erb/img/erb-banner.png" width="100%" />
 
 <br>

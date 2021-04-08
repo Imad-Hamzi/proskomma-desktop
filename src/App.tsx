@@ -3,20 +3,24 @@ import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import TitleBar from 'frameless-titlebar';
 import {remote} from 'electron';
-import {Proskomma} from 'proskomma';
+import {UWProskomma} from 'uw-proskomma';
 import fse from 'fs-extra';
 import path from 'path';
 
 import Footer from './footer';
 import DocSets from './doc_sets';
 import Browse from './browse';
+import Search from './search';
 import PkQuery from './pk_query';
 // import Import from './import';
 import icon from '../assets/icons/48x48.ico';
 
-const pk = new Proskomma();
+const pk = new UWProskomma();
 let timeToLoad = Date.now();
-pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/ult_nt.json')));
+pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ult_pkserialized.json')));
+pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ust_pkserialized.json')));
+pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_hbo_uhb_pkserialized.json')));
+pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_grc_ugnt_pkserialized.json')));
 timeToLoad = Date.now() - timeToLoad;
 const currentWindow = remote.getCurrentWindow();
 
@@ -26,6 +30,9 @@ export default function App() {
   const [selectedDocSet, setSelectedDocSet] = useState('');
   const [selectedDocument, setSelectedDocument] = useState('');
   const [savedQueries, setSavedQueries] = React.useState([]);
+  const [selectedBook, setSelectedBook] = React.useState('MRK');
+  const [selectedChapter, setSelectedChapter] = React.useState('1');
+  const [selectedVerse, setSelectedVerse] = React.useState('1');
   const state = {
     tabIndex: {
       get: tabIndex,
@@ -39,9 +46,21 @@ export default function App() {
       get: selectedDocument,
       set: setSelectedDocument,
     },
-    savedQueries : {
+    savedQueries: {
       get: savedQueries,
       set: setSavedQueries,
+    },
+    selectedBook: {
+      get: selectedBook,
+      set: setSelectedBook,
+    },
+    selectedChapter: {
+      get: selectedChapter,
+      set: setSelectedChapter,
+    },
+    selectedVerse: {
+      get: selectedVerse,
+      set: setSelectedVerse,
     },
   };
   useEffect(() => {
@@ -97,7 +116,7 @@ export default function App() {
           <Browse pk={pk} state={state}/>
         </TabPanel>
         <TabPanel>
-          <div className="content">Search Not Implemented</div>
+          <Search pk={pk} state={state}/>
         </TabPanel>
         <TabPanel>
           <PkQuery
