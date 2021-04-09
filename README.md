@@ -9,8 +9,10 @@ You need to unzip the translation data before running.
 ```
 cd proskomma-desktop/data
 unzip uW_translations.zip
+unzip ebible_translations.zip
+unzip dbl_translations.zip
 cd ..
-yarn add
+yarn install
 yarn start
 ```
 
