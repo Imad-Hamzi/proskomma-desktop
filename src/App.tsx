@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
+import React, { useEffect, useState } from 'react';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import TitleBar from 'frameless-titlebar';
-import {remote} from 'electron';
-import {UWProskomma} from 'uw-proskomma';
+import { remote } from 'electron';
+import { UWProskomma } from 'uw-proskomma';
 import fse from 'fs-extra';
 import path from 'path';
 
@@ -14,18 +14,27 @@ import Search from './search';
 import PkQuery from './pk_query';
 // import Import from './import';
 import icon from '../assets/icons/48x48.ico';
+
 const pk = new UWProskomma();
+const mappingQueries = [];
 let timeToLoad = Date.now();
-try {
-  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ult_pkserialized.json')));
-  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ust_pkserialized.json')));
-  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_hbo_uhb_pkserialized.json')));
-  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_grc_ugnt_pkserialized.json')));
-  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/ebible_en_web_pkserialized.json')));
-  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/ebible_fr_lsg_pkserialized.json')));
-  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/dbl_en_drh_pkserialized.json')));
-} catch (err) {
-  window.close();
+const translationSources = [
+  '../data/unfoldingWord_en_ult_pkserialized.json',
+  '../data/unfoldingWord_en_ust_pkserialized.json',
+  '../data/unfoldingWord_hbo_uhb_pkserialized.json',
+  '../data/unfoldingWord_grc_ugnt_pkserialized.json',
+  '../data/ebible_en_web_pkserialized.json',
+  '../data/ebible_fr_lsg_pkserialized.json',
+  '../data/dbl_en_drh_pkserialized.json',
+].map(ts => path.resolve(__dirname, ts));
+
+for (const [docSetId, vrsSource] of [
+  ['ebible/en_web', '../data/web.vrs'],
+  ['dbl/en_drh', '../data/drh.vrs'],
+]) {
+  const vrs = fse.readFileSync(path.resolve(__dirname, vrsSource)).toString();
+  const mutationQuery = `mutation { setVerseMapping(docSetId: "${docSetId}" vrsSource: """${vrs}""")}`;
+  mappingQueries.push(mutationQuery);
 }
 timeToLoad = Date.now() - timeToLoad;
 const currentWindow = remote.getCurrentWindow();
@@ -39,6 +48,7 @@ export default function App() {
   const [selectedBook, setSelectedBook] = React.useState('MRK');
   const [selectedChapter, setSelectedChapter] = React.useState('1');
   const [selectedVerse, setSelectedVerse] = React.useState('1');
+  const [mutationCount, setMutationCount] = React.useState('0');
   const state = {
     tabIndex: {
       get: tabIndex,
@@ -68,6 +78,10 @@ export default function App() {
       get: selectedVerse,
       set: setSelectedVerse,
     },
+    mutationCount: {
+      get: mutationCount,
+      set: setMutationCount,
+    },
   };
   useEffect(() => {
     const onMaximized = () => setMaximized(true);
@@ -80,6 +94,25 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const loadTranslations = async () => {
+      for (const translationSource of translationSources) {
+        pk.loadSuccinctDocSet(fse.readJsonSync(translationSource));
+        setMutationCount(mutationCount + 1);
+      }
+    };
+    const loadMappings = async () => {
+      for (const query of mappingQueries) {
+        await pk.gqlQuery(query);
+        setMutationCount(mutationCount + 1);
+      }
+    };
+    loadTranslations()
+      .then(
+        () => loadMappings()
+      );
+  }, []);
+
   const handleMaximize = () => {
     if (maximized) {
       currentWindow.restore();
@@ -89,7 +122,7 @@ export default function App() {
   };
 
   return (
-    <React.Fragment>
+    <>
       <TitleBar
         title="Chaliki (powered by Proskomma)"
         iconSrc={icon}
@@ -102,7 +135,7 @@ export default function App() {
       />
       <Tabs
         selectedIndex={tabIndex}
-        onSelect={index => setTabIndex(index)}
+        onSelect={(index) => setTabIndex(index)}
         className="top_tabs"
       >
         <TabList>
@@ -112,27 +145,19 @@ export default function App() {
           <Tab>Pk Query</Tab>
         </TabList>
         <TabPanel>
-          <DocSets
-            pk={pk}
-            timeToLoad={timeToLoad}
-            state={state}
-          />
+          <DocSets pk={pk} timeToLoad={timeToLoad} state={state} />
         </TabPanel>
         <TabPanel>
-          <Browse pk={pk} state={state}/>
+          <Browse pk={pk} state={state} />
         </TabPanel>
         <TabPanel>
-          <Search pk={pk} state={state}/>
+          <Search pk={pk} state={state} />
         </TabPanel>
         <TabPanel>
-          <PkQuery
-            pk={pk}
-            state={state}
-          />
+          <PkQuery pk={pk} state={state} />
         </TabPanel>
       </Tabs>
-      <Footer/>
-    </React.Fragment>
-  )
-    ;
+      <Footer />
+    </>
+  );
 }

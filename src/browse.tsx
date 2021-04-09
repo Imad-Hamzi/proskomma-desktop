@@ -67,7 +67,6 @@ const Browse = (props) => {
         }
         const res = await props.pk.gqlQuery(browseQuery);
         setResult(res);
-        console.log(renderMode, browseQuery, JSON.stringify(res));
       }
     };
     doQuery();
