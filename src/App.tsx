@@ -14,7 +14,6 @@ import Search from './search';
 import PkQuery from './pk_query';
 // import Import from './import';
 import icon from '../assets/icons/48x48.ico';
-
 const pk = new UWProskomma();
 let timeToLoad = Date.now();
 try {
@@ -22,6 +21,9 @@ try {
   pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_en_ust_pkserialized.json')));
   pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_hbo_uhb_pkserialized.json')));
   pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/unfoldingWord_grc_ugnt_pkserialized.json')));
+  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/ebible_en_web_pkserialized.json')));
+  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/ebible_fr_lsg_pkserialized.json')));
+  pk.loadSuccinctDocSet(fse.readJsonSync(path.resolve(__dirname, '../data/dbl_en_drh_pkserialized.json')));
 } catch (err) {
   window.close();
 }
