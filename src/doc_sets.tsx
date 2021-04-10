@@ -1,6 +1,5 @@
 import React from 'react';
 import DocSetButton from './docset_button';
-import DocumentLink from './document_link';
 
 const DocSets = (props) => {
   const [result, setResult] = React.useState({});
@@ -8,12 +7,8 @@ const DocSets = (props) => {
     '{' +
     '  processor packageVersion nDocSets nDocuments' +
     '  docSets {' +
-    '    id selectors { key value }' +
-    '    documents {' +
-    '      id' +
-    '      bookCode: header(id: "bookCode" )' +
-    '      title: header(id: "toc2")' +
-    '    }' +
+    '    id hasMapping' +
+    '    documents { id }' +
     '  }' +
     '}';
   React.useEffect(() => {
@@ -23,14 +18,7 @@ const DocSets = (props) => {
       // console.log(res);
     };
     doQuery();
-  }, []);
-  const selectorByName = (selectors, selectorName) =>
-    selectors.filter((s) => s.key === selectorName)[0].value;
-  const ds = !result.data
-    ? ''
-    : result.data.docSets.filter(
-        (ds) => ds.id === props.state.selectedDocSet.get
-      )[0];
+  }, [props.state.mutationCount]);
   return (
     <div className="content scrollableTabPanel">
       <p>
@@ -44,11 +32,11 @@ const DocSets = (props) => {
           result.data ? result.data.packageVersion : ''
         }.`}
       </p>
-      <h3>
-        {`${result.data ? result.data.nDocSets : ''} docSet(s) containing ${
-          result.data ? result.data.nDocuments : ''
+      <h2>
+        {`${result.data ? result.data.nDocSets : '0'} docSet(s) containing ${
+          result.data ? result.data.nDocuments : '0'
         } document(s)`}
-      </h3>
+      </h2>
       <div>
         {!result.data ? (
           ''
@@ -60,30 +48,6 @@ const DocSets = (props) => {
           </div>
         )}
       </div>
-      {props.state.selectedDocSet.get === '' || !ds ? (
-        ''
-      ) : (
-        <div>
-          <>
-            <h3>
-              {`${selectorByName(ds.selectors, 'abbr')} (${selectorByName(
-                ds.selectors,
-                'lang'
-              )})`}
-            </h3>
-            <div>
-              {ds.documents.map((d) => (
-                <DocumentLink
-                  key={d.id}
-                  docSet={ds}
-                  doc={d}
-                  state={props.state}
-                />
-              ))}
-            </div>
-          </>
-        </div>
-      )}
     </div>
   );
 };

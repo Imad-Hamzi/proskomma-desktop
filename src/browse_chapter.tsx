@@ -7,7 +7,7 @@ const BrowseChapter = (props) => {
     '  docSet(id:"%docSetId%") {' +
     '    document(bookCode: "%bookCode%") {' +
     '      title: header(id: "toc2")' +
-    '      cv (chapter:"%chapter%") { text }' +
+    '      cv (chapter:"%chapter%") { text items { type subType payload } }' +
     '    }' +
     '  }' +
     '}';
@@ -37,7 +37,18 @@ const BrowseChapter = (props) => {
     );
     const scriptureText =
       'cv' in result.data.docSet.document ? (
-        <p>{result.data.docSet.document.cv[0].text}</p>
+        <p>{
+          result.data.docSet.document.cv[0].items
+            .filter(
+              i =>
+                i.type !== 'graft' &&
+                i.subType !== 'end'
+                && (i.subType !== 'start' || i.payload.startsWith('verses'))
+            ).map(
+            i =>
+              i.type === 'scope' ? [<b>{i.payload.split('/')[1]}</b>, ' '] : i.payload
+          )
+        }</p>
       ) : (
         ''
       );
