@@ -54,6 +54,7 @@ const BrowseChapter = (props) => {
           <BrowseChapterNavigation state={props.state} direction="previous" destination={result.data.docSet.document.nav.previousChapter} />
           {scriptureTitle}
           <BrowseChapterNavigation state={props.state} direction="next" destination={result.data.docSet.document.nav.nextChapter} />
+          {' (click on verse number to select verse)'}
         </h3>
         {scriptureText}
       </>

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BrowseModeSwitcher from './browse_mode_switcher';
 import BrowseVerse from './browse_verse';
 import BrowseChapter from './browse_chapter';
 import BrowseBlocks from './browse_blocks';
@@ -78,10 +77,6 @@ const Browse = (props) => {
         </div>
       )}
       {browseView}
-      <BrowseModeSwitcher
-        renderMode={renderMode}
-        setRenderMode={setRenderMode}
-      />
     </div>
   );
 };

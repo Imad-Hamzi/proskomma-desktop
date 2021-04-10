@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { renderVersesItems } from './render_utils';
+import BrowseModeButton from "./browse_mode_button";
 
 const BrowseBlocks = (props) => {
   const [result, setResult] = React.useState({});
@@ -39,8 +40,10 @@ const BrowseBlocks = (props) => {
   if (result.data && result.data.docSet) {
     const scriptureTitle = (
       <h3>
-        {`Block(s) containing ${result.data.docSet.document.title}`}
+        {`Paragraph(s) containing ${result.data.docSet.document.title}`}
         {` ${props.state.selectedChapter.get}:${props.state.selectedVerse.get}`}
+        <BrowseModeButton newMode="verse" setRenderMode={props.setRenderMode} label="View Verse"/>
+        <BrowseModeButton newMode="chapter" setRenderMode={props.setRenderMode} label="View Chapter"/>
       </h3>
     );
     const scriptureText =

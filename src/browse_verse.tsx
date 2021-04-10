@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BrowseVerseNavigation from './browse_verse_navigation';
+import BrowseModeButton from './browse_mode_button';
 
 const BrowseVerse = (props) => {
   const [result, setResult] = React.useState({});
@@ -56,6 +57,8 @@ const BrowseVerse = (props) => {
           <BrowseVerseNavigation state={props.state} direction="previous" destination={result.data.docSet.document.nav.previousVerse} />
           {scriptureTitle}
           <BrowseVerseNavigation state={props.state} direction="next" destination={result.data.docSet.document.nav.nextVerse} />
+          <BrowseModeButton newMode="chapter" setRenderMode={props.setRenderMode} label="View Whole Chapter"/>
+          <BrowseModeButton newMode="blocks" setRenderMode={props.setRenderMode} label="View Paragraphs"/>
         </h3>
         {scriptureText}
       </>
