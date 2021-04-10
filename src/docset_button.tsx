@@ -8,7 +8,7 @@ const DocSetButton = (props) => {
         props.state.selectedDocument.set('');
       }}
     >
-      {props.docSet.id}
+      {props.state.selectedDocSet.get === props.docSet.id ? <b>{props.docSet.id} </b> : props.docSet.id}
     </button>
   );
 };

@@ -10,7 +10,7 @@ const DocumentLink = (props) => {
           props.state.tabIndex.set(1);
         }}
       >
-        {props.doc.title}
+        { props.state.selectedDocument.get === props.doc.id ? <b>{props.doc.title}</b> : props.doc.title }
       </button>
     </>
   );

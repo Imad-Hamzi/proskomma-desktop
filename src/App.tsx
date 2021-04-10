@@ -12,12 +12,10 @@ import DocSets from './doc_sets';
 import Browse from './browse';
 import Search from './search';
 import PkQuery from './pk_query';
-// import Import from './import';
 import icon from '../assets/icons/48x48.ico';
 
 const pk = new UWProskomma();
 const mappingQueries = [];
-let timeToLoad = Date.now();
 const translationSources = [
   '../data/unfoldingWord_en_ult_pkserialized.json',
   '../data/unfoldingWord_en_ust_pkserialized.json',
@@ -36,7 +34,6 @@ for (const [docSetId, vrsSource] of [
   const mutationQuery = `mutation { setVerseMapping(docSetId: "${docSetId}" vrsSource: """${vrs}""")}`;
   mappingQueries.push(mutationQuery);
 }
-timeToLoad = Date.now() - timeToLoad;
 const currentWindow = remote.getCurrentWindow();
 
 export default function App() {
@@ -145,7 +142,7 @@ export default function App() {
           <Tab>Pk Query</Tab>
         </TabList>
         <TabPanel>
-          <DocSets pk={pk} timeToLoad={timeToLoad} state={state} />
+          <DocSets pk={pk} state={state} />
         </TabPanel>
         <TabPanel>
           <Browse pk={pk} state={state} />

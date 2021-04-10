@@ -33,39 +33,31 @@ const DocSets = (props) => {
       )[0];
   return (
     <div className="content scrollableTabPanel">
-      <div>
+      <p>
         <i>
           Click in Window, then F12, to Toggle Dev Tools (Scary Output to the
           Right)!
         </i>
-      </div>
-      <div>
-        Using &apos;{result.data ? result.data.processor : ''}&apos;
-        {' Version '}
-        {result.data ? result.data.packageVersion : ''}.
-      </div>
-      <div>
-        {result.data ? result.data.nDocSets : ''}
-        {' docSet(s)'}
-        {' containing '}
-        {result.data ? result.data.nDocuments : ''}
-        {' document(s) loaded from Proskomma JSON in '}
-        {props.timeToLoad}
-        {' msec'}
-      </div>
-      <hr />
+      </p>
+      <p>
+        {`Using ${result.data ? result.data.processor : ''} Version ${
+          result.data ? result.data.packageVersion : ''
+        }.`}
+      </p>
+      <h3>
+        {`${result.data ? result.data.nDocSets : ''} docSet(s) containing ${
+          result.data ? result.data.nDocuments : ''
+        } document(s)`}
+      </h3>
       <div>
         {!result.data ? (
           ''
         ) : (
-          <>
-            <h3>DocSets</h3>
-            <div>
-              {result.data.docSets.map((ds) => (
-                <DocSetButton key={ds.id} state={props.state} docSet={ds} />
-              ))}
-            </div>
-          </>
+          <div>
+            {result.data.docSets.map((ds) => (
+              <DocSetButton key={ds.id} state={props.state} docSet={ds} />
+            ))}
+          </div>
         )}
       </div>
       {props.state.selectedDocSet.get === '' || !ds ? (
@@ -74,10 +66,10 @@ const DocSets = (props) => {
         <div>
           <>
             <h3>
-              {`${selectorByName(
+              {`${selectorByName(ds.selectors, 'abbr')} (${selectorByName(
                 ds.selectors,
-                'abbr'
-              )} (${selectorByName(ds.selectors, 'lang')})`}
+                'lang'
+              )})`}
             </h3>
             <div>
               {ds.documents.map((d) => (
