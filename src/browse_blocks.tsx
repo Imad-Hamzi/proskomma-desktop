@@ -47,7 +47,7 @@ const BrowseBlocks = (props) => {
       'mainSequence' in result.data.docSet.document
         ? [
             ...result.data.docSet.document.mainSequence.blocks.entries(),
-          ].map((b) => <p key={b[0]}>{renderVersesItems(b[1].items)}</p>)
+          ].map((b) => <p key={b[0]}>{renderVersesItems(b[1].items, props.state.selectedVerse.set, props.setRenderMode)}</p>)
         : '';
     return (
       <>

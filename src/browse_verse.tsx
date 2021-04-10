@@ -1,5 +1,7 @@
 import React from 'react';
 
+import BrowseVerseNavigation from './browse_verse_navigation';
+
 const BrowseVerse = (props) => {
   const [result, setResult] = React.useState({});
   const verseQueryTemplate =
@@ -8,11 +10,9 @@ const BrowseVerse = (props) => {
     '    document(bookCode: "%bookCode%") {' +
     '      title: header(id: "toc2")' +
     '      cv (chapter:"%chapter%" verses:["%verse%"]) { text }' +
-    '      cvNavigation(chapter:"%chapter%" verse: "%verse%") {' +
-    '        previousChapter' +
+    '      nav: cvNavigation(chapter:"%chapter%" verse: "%verse%") {' +
     '        previousVerse { chapter verse }' +
     '        nextVerse { chapter verse }' +
-    '        nextChapter' +
     '      }' +
     '    }' +
     '  }' +
@@ -33,14 +33,16 @@ const BrowseVerse = (props) => {
   }, [
     props.state.selectedDocSet.get,
     props.state.selectedBook.get,
+    props.state.selectedChapter.get,
+    props.state.selectedVerse.get,
     props.renderMode,
   ]);
   if (result.data && result.data.docSet) {
     const scriptureTitle = (
-      <h3>
+      <>
         {result.data.docSet.document.title}
         {` ${props.state.selectedChapter.get}:${props.state.selectedVerse.get}`}
-      </h3>
+      </>
     );
     const scriptureText =
       'cv' in result.data.docSet.document ? (
@@ -50,7 +52,11 @@ const BrowseVerse = (props) => {
       );
     return (
       <>
-        {scriptureTitle}
+        <h3>
+          <BrowseVerseNavigation state={props.state} direction="previous" destination={result.data.docSet.document.nav.previousVerse} />
+          {scriptureTitle}
+          <BrowseVerseNavigation state={props.state} direction="next" destination={result.data.docSet.document.nav.nextVerse} />
+        </h3>
         {scriptureText}
       </>
     );

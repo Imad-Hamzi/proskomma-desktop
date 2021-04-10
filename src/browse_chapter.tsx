@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { renderVersesItems } from './render_utils';
+import BrowseChapterNavigation from "./browse_chapter_navigation";
 
 const BrowseChapter = (props) => {
   const [result, setResult] = React.useState({});
@@ -11,6 +12,10 @@ const BrowseChapter = (props) => {
     '      title: header(id: "toc2")' +
     '      cv (chapter:"%chapter%") {' +
     '        items { type subType payload }' +
+    '      }' +
+    '      nav: cvNavigation(chapter:"%chapter%" verse: "1") {' +
+    '        previousChapter' +
+    '        nextChapter' +
     '      }' +
     '    }' +
     '  }' +
@@ -31,23 +36,25 @@ const BrowseChapter = (props) => {
   }, [
     props.state.selectedDocSet.get,
     props.state.selectedBook.get,
+    props.state.selectedChapter.get,
+    props.state.selectedVerse.get,
     props.renderMode,
   ]);
   if (result.data && result.data.docSet) {
-    const scriptureTitle = (
-      <h3>
-        {result.data.docSet.document.title} {props.state.selectedChapter.get}
-      </h3>
-    );
+    const scriptureTitle = <>{result.data.docSet.document.title} {props.state.selectedChapter.get}</>;
     const scriptureText =
       'cv' in result.data.docSet.document ? (
-        <p>{renderVersesItems(result.data.docSet.document.cv[0].items)}</p>
+        <p>{renderVersesItems(result.data.docSet.document.cv[0].items, props.state.selectedVerse.set, props.setRenderMode)}</p>
       ) : (
         ''
       );
     return (
       <>
-        {scriptureTitle}
+        <h3>
+          <BrowseChapterNavigation state={props.state} direction="previous" destination={result.data.docSet.document.nav.previousChapter} />
+          {scriptureTitle}
+          <BrowseChapterNavigation state={props.state} direction="next" destination={result.data.docSet.document.nav.nextChapter} />
+        </h3>
         {scriptureText}
       </>
     );

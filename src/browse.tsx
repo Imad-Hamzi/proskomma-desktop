@@ -40,13 +40,13 @@ const Browse = (props) => {
   let browseView;
   switch (renderMode) {
     case 'verse':
-      browseView = <BrowseVerse pk={props.pk} state={props.state} />;
+      browseView = <BrowseVerse pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
       break;
     case 'chapter':
-      browseView = <BrowseChapter pk={props.pk} state={props.state} />;
+      browseView = <BrowseChapter pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
       break;
     case 'blocks':
-      browseView = <BrowseBlocks pk={props.pk} state={props.state} />;
+      browseView = <BrowseBlocks pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
       break;
     default:
       throw new Error(`Unknown renderMode '${renderMode}'`);
