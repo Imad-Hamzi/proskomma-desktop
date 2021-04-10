@@ -55,7 +55,7 @@ const BrowseVerse = (props) => {
       </>
     );
   }
-  return <div>No document selected</div>;
+  return <div>No docSet selected</div>;
 };
 
 export default BrowseVerse;

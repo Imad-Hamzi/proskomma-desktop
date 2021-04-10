@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { renderVersesItems } from './render_utils';
+
 const BrowseBlocks = (props) => {
   const [result, setResult] = React.useState({});
   const blocksQueryTemplate =
@@ -8,7 +10,9 @@ const BrowseBlocks = (props) => {
     '    document(bookCode: "%bookCode%") {' +
     '      title: header(id: "toc2")' +
     '      mainSequence {' +
-    '        blocks(withScriptureCV:"%chapter%:%verse%") { text }' +
+    '        blocks(withScriptureCV:"%chapter%:%verse%") {' +
+    '          items { type subType payload }' +
+    '        }' +
     '      }' +
     '    }' +
     '  }' +
@@ -43,7 +47,7 @@ const BrowseBlocks = (props) => {
       'mainSequence' in result.data.docSet.document
         ? [
             ...result.data.docSet.document.mainSequence.blocks.entries(),
-          ].map((b) => <p key={b[0]}>{b[1].text}</p>)
+          ].map((b) => <p key={b[0]}>{renderVersesItems(b[1].items)}</p>)
         : '';
     return (
       <>
@@ -52,7 +56,7 @@ const BrowseBlocks = (props) => {
       </>
     );
   }
-  return <div>No document selected</div>;
+  return <div>No docSet selected</div>;
 };
 
 export default BrowseBlocks;

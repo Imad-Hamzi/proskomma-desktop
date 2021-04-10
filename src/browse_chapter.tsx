@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { renderVersesItems } from './render_utils';
+
 const BrowseChapter = (props) => {
   const [result, setResult] = React.useState({});
   const chapterQueryTemplate =
@@ -7,7 +9,9 @@ const BrowseChapter = (props) => {
     '  docSet(id:"%docSetId%") {' +
     '    document(bookCode: "%bookCode%") {' +
     '      title: header(id: "toc2")' +
-    '      cv (chapter:"%chapter%") { text items { type subType payload } }' +
+    '      cv (chapter:"%chapter%") {' +
+    '        items { type subType payload }' +
+    '      }' +
     '    }' +
     '  }' +
     '}';
@@ -37,18 +41,7 @@ const BrowseChapter = (props) => {
     );
     const scriptureText =
       'cv' in result.data.docSet.document ? (
-        <p>{
-          result.data.docSet.document.cv[0].items
-            .filter(
-              i =>
-                i.type !== 'graft' &&
-                i.subType !== 'end'
-                && (i.subType !== 'start' || i.payload.startsWith('verses'))
-            ).map(
-            i =>
-              i.type === 'scope' ? [<b>{i.payload.split('/')[1]}</b>, ' '] : i.payload
-          )
-        }</p>
+        <p>{renderVersesItems(result.data.docSet.document.cv[0].items)}</p>
       ) : (
         ''
       );
@@ -59,7 +52,7 @@ const BrowseChapter = (props) => {
       </>
     );
   }
-  return <div>No document selected</div>;
+  return <div>No docSet selected</div>;
 };
 
 export default BrowseChapter;
