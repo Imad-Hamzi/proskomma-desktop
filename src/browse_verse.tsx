@@ -38,7 +38,7 @@ const BrowseVerse = (props) => {
     props.state.selectedVerse.get,
     props.renderMode,
   ]);
-  if (result.data && result.data.docSet) {
+  if (result.data && result.data.docSet && result.data.docSet.document) {
     const scriptureTitle = (
       <>
         {result.data.docSet.document.title}
@@ -54,11 +54,27 @@ const BrowseVerse = (props) => {
     return (
       <>
         <h3>
-          <BrowseVerseNavigation state={props.state} direction="previous" destination={result.data.docSet.document.nav.previousVerse} />
+          <BrowseVerseNavigation
+            state={props.state}
+            direction="previous"
+            destination={result.data.docSet.document.nav.previousVerse}
+          />
           {scriptureTitle}
-          <BrowseVerseNavigation state={props.state} direction="next" destination={result.data.docSet.document.nav.nextVerse} />
-          <BrowseModeButton newMode="chapter" setRenderMode={props.setRenderMode} label="View Whole Chapter"/>
-          <BrowseModeButton newMode="blocks" setRenderMode={props.setRenderMode} label="View Paragraphs"/>
+          <BrowseVerseNavigation
+            state={props.state}
+            direction="next"
+            destination={result.data.docSet.document.nav.nextVerse}
+          />
+          <BrowseModeButton
+            newMode="chapter"
+            setRenderMode={props.setRenderMode}
+            label="View Whole Chapter"
+          />
+          <BrowseModeButton
+            newMode="blocks"
+            setRenderMode={props.setRenderMode}
+            label="View Paragraphs"
+          />
         </h3>
         {scriptureText}
       </>

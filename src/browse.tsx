@@ -3,7 +3,7 @@ import React from 'react';
 import BrowseVerse from './browse_verse';
 import BrowseChapter from './browse_chapter';
 import BrowseBlocks from './browse_blocks';
-import DocumentLink from './document_link';
+import DocumentPicker from './DocumentPicker';
 
 const Browse = (props) => {
   const [renderMode, setRenderMode] = React.useState('verse');
@@ -39,20 +39,23 @@ const Browse = (props) => {
   let browseView;
   switch (renderMode) {
     case 'verse':
-      browseView = <BrowseVerse pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
+      browseView =
+        <BrowseVerse pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
       break;
     case 'chapter':
-      browseView = <BrowseChapter pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
+      browseView =
+        <BrowseChapter pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
       break;
     case 'blocks':
-      browseView = <BrowseBlocks pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
+      browseView =
+        <BrowseBlocks pk={props.pk} state={props.state} renderMode={renderMode} setRenderMode={setRenderMode}/>;
       break;
     default:
       throw new Error(`Unknown renderMode '${renderMode}'`);
   }
   return (
     <div className="content scrollableTabPanel">
-      {!props.state.selectedDocSet.get || !ds || !ds.selectors? (
+      {!props.state.selectedDocSet.get || !ds || !ds.selectors ? (
         ''
       ) : (
         <div>
@@ -63,16 +66,10 @@ const Browse = (props) => {
                 'lang'
               )})`}
             </h2>
-            <div>
-              {ds.documents.map((d) => (
-                <DocumentLink
-                  key={d.id}
-                  docSet={ds}
-                  doc={d}
-                  state={props.state}
-                />
-              ))}
-            </div>
+            <DocumentPicker
+              docSet={ds}
+              state={props.state}
+            />
           </>
         </div>
       )}

@@ -44,16 +44,30 @@ const BrowseChapter = (props) => {
     const scriptureTitle = <>{result.data.docSet.document.title} {props.state.selectedChapter.get}</>;
     const scriptureText =
       'cv' in result.data.docSet.document ? (
-        <p>{renderVersesItems(result.data.docSet.document.cv[0].items, props.state.selectedVerse.set, props.setRenderMode)}</p>
+        <p>{
+          renderVersesItems(
+            result.data.docSet.document.cv[0].items,
+            props.state.selectedVerse.set,
+            props.setRenderMode
+          )
+        }</p>
       ) : (
         ''
       );
     return (
       <>
         <h3>
-          <BrowseChapterNavigation state={props.state} direction="previous" destination={result.data.docSet.document.nav.previousChapter} />
+          <BrowseChapterNavigation
+            state={props.state}
+            direction="previous"
+            destination={result.data.docSet.document.nav.previousChapter}
+          />
           {scriptureTitle}
-          <BrowseChapterNavigation state={props.state} direction="next" destination={result.data.docSet.document.nav.nextChapter} />
+          <BrowseChapterNavigation
+            state={props.state}
+            direction="next"
+            destination={result.data.docSet.document.nav.nextChapter}
+          />
           {' (click on verse number to select verse)'}
         </h3>
         {scriptureText}

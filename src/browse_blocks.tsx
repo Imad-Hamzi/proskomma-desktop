@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { renderVersesItems } from './render_utils';
-import BrowseModeButton from "./browse_mode_button";
+import BrowseModeButton from './browse_mode_button';
 
 const BrowseBlocks = (props) => {
   const [result, setResult] = React.useState({});
@@ -42,15 +42,31 @@ const BrowseBlocks = (props) => {
       <h3>
         {`Paragraph(s) containing ${result.data.docSet.document.title}`}
         {` ${props.state.selectedChapter.get}:${props.state.selectedVerse.get}`}
-        <BrowseModeButton newMode="verse" setRenderMode={props.setRenderMode} label="View Verse"/>
-        <BrowseModeButton newMode="chapter" setRenderMode={props.setRenderMode} label="View Chapter"/>
+        <BrowseModeButton
+          newMode="verse"
+          setRenderMode={props.setRenderMode}
+          label="View Verse"
+        />
+        <BrowseModeButton
+          newMode="chapter"
+          setRenderMode={props.setRenderMode}
+          label="View Chapter"
+        />
       </h3>
     );
     const scriptureText =
       'mainSequence' in result.data.docSet.document
         ? [
             ...result.data.docSet.document.mainSequence.blocks.entries(),
-          ].map((b) => <p key={b[0]}>{renderVersesItems(b[1].items, props.state.selectedVerse.set, props.setRenderMode)}</p>)
+          ].map((b) => (
+            <p key={b[0]}>
+              {renderVersesItems(
+                b[1].items,
+                props.state.selectedVerse.set,
+                props.setRenderMode
+              )}
+            </p>
+          ))
         : '';
     return (
       <>

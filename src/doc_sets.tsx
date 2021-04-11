@@ -43,7 +43,11 @@ const DocSets = (props) => {
         ) : (
           <div>
             {result.data.docSets.map((ds) => (
-              <DocSetButton key={ds.id} state={props.state} docSet={ds} />
+              <DocSetButton
+                key={ds.id}
+                state={props.state}
+                docSet={ds}
+              />
             ))}
           </div>
         )}
