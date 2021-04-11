@@ -16,7 +16,7 @@ const DocSets = withStyles(styles)((props) => {
     '  processor packageVersion nDocSets nDocuments' +
     '  docSets {' +
     '    id hasMapping' +
-    '    documents { id }' +
+    '    documents { id bookCode: header(id:"bookCode")}' +
     '  }' +
     '}';
   React.useEffect(() => {

@@ -36,7 +36,7 @@ const BrowseVerse = (props) => {
     props.state.selectedBook.get,
     props.state.selectedChapter.get,
     props.state.selectedVerse.get,
-    props.renderMode,
+    props.state.renderMode.get,
   ]);
   if (result.data && result.data.docSet && result.data.docSet.document) {
     const scriptureTitle = (
@@ -67,12 +67,12 @@ const BrowseVerse = (props) => {
           />
           <BrowseModeButton
             newMode="chapter"
-            setRenderMode={props.setRenderMode}
+            setRenderMode={props.state.renderMode.set}
             label="View Whole Chapter"
           />
           <BrowseModeButton
             newMode="blocks"
-            setRenderMode={props.setRenderMode}
+            setRenderMode={props.state.renderMode.set}
             label="View Paragraphs"
           />
         </h3>

@@ -9,7 +9,8 @@ const DocSet = (props) => {
       secondary={`${props.docSet.documents.length} documents with${props.docSet.hasMapping ? '' : 'out'} verse mapping`}
       onClick={() => {
         props.state.selectedDocSet.set(props.docSet.id);
-        props.state.selectedDocument.set('MRK');
+        props.state.selectedDocument.set(props.docSet.documents[0].id);
+        props.state.selectedBook.set(props.docSet.documents[0].bookCode);
       }}
     />
   );

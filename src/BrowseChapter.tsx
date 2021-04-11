@@ -38,7 +38,7 @@ const BrowseChapter = (props) => {
     props.state.selectedBook.get,
     props.state.selectedChapter.get,
     props.state.selectedVerse.get,
-    props.renderMode,
+    props.state.renderMode.get,
   ]);
   if (result.data && result.data.docSet) {
     const scriptureTitle = <>{result.data.docSet.document.title} {props.state.selectedChapter.get}</>;
@@ -48,7 +48,7 @@ const BrowseChapter = (props) => {
           renderVersesItems(
             result.data.docSet.document.cv[0].items,
             props.state.selectedVerse.set,
-            props.setRenderMode
+            props.state.renderMode.set
           )
         }</p>
       ) : (

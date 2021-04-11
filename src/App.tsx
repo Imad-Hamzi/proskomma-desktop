@@ -53,10 +53,11 @@ export default function App() {
   const [selectedDocSet, setSelectedDocSet] = useState('');
   const [selectedDocument, setSelectedDocument] = useState('');
   const [savedQueries, setSavedQueries] = React.useState([]);
-  const [selectedBook, setSelectedBook] = React.useState('MRK');
+  const [selectedBook, setSelectedBook] = React.useState('');
   const [selectedChapter, setSelectedChapter] = React.useState('1');
   const [selectedVerse, setSelectedVerse] = React.useState('1');
   const [mutationCount, setMutationCount] = React.useState(0);
+  const [renderMode, setRenderMode] = React.useState('verse');
   const state = {
     tabN: {
       get: tabN,
@@ -89,6 +90,10 @@ export default function App() {
     mutationCount: {
       get: mutationCount,
       set: setMutationCount,
+    },
+    renderMode: {
+      get: renderMode,
+      set: setRenderMode,
     },
   };
   const mappingQueries = [];

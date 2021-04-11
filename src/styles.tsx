@@ -48,7 +48,7 @@ const styles = (theme) => ({
   },
   docSetsSection: {
     marginTop: '20px',
-  }
+  },
 });
 
 export default styles;

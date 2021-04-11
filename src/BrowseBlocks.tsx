@@ -35,7 +35,7 @@ const BrowseBlocks = (props) => {
   }, [
     props.state.selectedDocSet.get,
     props.state.selectedBook.get,
-    props.renderMode,
+    props.state.renderMode.get,
   ]);
   if (result.data && result.data.docSet) {
     const scriptureTitle = (
@@ -44,12 +44,12 @@ const BrowseBlocks = (props) => {
         {` ${props.state.selectedChapter.get}:${props.state.selectedVerse.get}`}
         <BrowseModeButton
           newMode="verse"
-          setRenderMode={props.setRenderMode}
+          setRenderMode={props.state.renderMode.set}
           label="View Verse"
         />
         <BrowseModeButton
           newMode="chapter"
-          setRenderMode={props.setRenderMode}
+          setRenderMode={props.state.renderMode.set}
           label="View Chapter"
         />
       </h3>
@@ -63,7 +63,7 @@ const BrowseBlocks = (props) => {
               {renderVersesItems(
                 b[1].items,
                 props.state.selectedVerse.set,
-                props.setRenderMode
+                props.state.renderMode.set
               )}
             </p>
           ))
