@@ -8,14 +8,12 @@ import { remote } from 'electron';
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/core/Menu';
 
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
+// import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+// import 'react-tabs/style/react-tabs.css';
 
 import { UWProskomma } from 'uw-proskomma';
 
@@ -53,7 +51,7 @@ export default function App() {
 
   const [maximized, setMaximized] = useState(currentWindow.isMaximized());
   // Actual app code starts here
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabN, setTabN] = useState(0);
   const [selectedDocSet, setSelectedDocSet] = useState('');
   const [selectedDocument, setSelectedDocument] = useState('');
   const [savedQueries, setSavedQueries] = React.useState([]);
@@ -62,9 +60,9 @@ export default function App() {
   const [selectedVerse, setSelectedVerse] = React.useState('1');
   const [mutationCount, setMutationCount] = React.useState(0);
   const state = {
-    tabIndex: {
-      get: tabIndex,
-      set: setTabIndex,
+    tabN: {
+      get: tabN,
+      set: setTabN,
     },
     selectedDocSet: {
       get: selectedDocSet,
@@ -104,7 +102,7 @@ export default function App() {
     '../data/ebible_en_web_pkserialized.json',
     '../data/ebible_fr_lsg_pkserialized.json',
     '../data/dbl_en_drh_pkserialized.json',
-  ].map(ts => path.resolve(__dirname, ts));
+  ].map((ts) => path.resolve(__dirname, ts));
 
   for (const [docSetId, vrsSource] of [
     ['ebible/en_web', '../data/web.vrs'],
@@ -125,50 +123,51 @@ export default function App() {
         await pk.gqlQuery(query);
       }
     };
-    loadTranslations()
-      .then(
-        () => loadMappings()
-          .then(() => {console.log("done"); setMutationCount(1)})
-      );
+    loadTranslations().then(() =>
+      loadMappings().then(() => {
+        console.log('done');
+        setMutationCount(1);
+      })
+    );
   }, []);
 
-  return (
-    <>
-      <TitleBar
-        title="Chaliki (powered by Proskomma)"
-        iconSrc={icon}
-        currentWindow={currentWindow}
-        onMaximize={handleMaximize}
-        onDoubleClick={handleMaximize}
-        onMinimize={() => currentWindow.minimize()}
-        onClose={() => currentWindow.close()}
-        maximized={maximized}
-      />
-      <Tabs
-        selectedIndex={tabIndex}
-        onSelect={(index) => setTabIndex(index)}
-        className="top_tabs"
-      >
-        <TabList>
-          <Tab>DocSets</Tab>
-          <Tab>Browse</Tab>
-          <Tab>Search</Tab>
-          <Tab>Pk Query</Tab>
-        </TabList>
-        <TabPanel>
+  const styles = (theme) => ({
+    root: {
+      flexGrow: 1,
+      backgroundColor: theme.palette.background.paper,
+    },
+    flex: {
+      flex: 1,
+    },
+    tabContent: {
+      padding: theme.spacing(2),
+    },
+  });
+
+  const RootComponent = withStyles(styles)((props) => {
+    const { classes } = props;
+    const onTabChange = (e, v) => {
+      setTabN(v);
+    };
+    return (
+      <div className={classes.root}>
+        <AppBar position="static">
+          <Tabs value={tabN} onChange={onTabChange}>
+            <Tab label="DocSets" />
+            <Tab label="Browse" />
+            <Tab label="Search" />
+            <Tab label="Raw Query" />
+          </Tabs>
+        </AppBar>
+        {tabN === 0 && (
           <DocSets pk={pk} state={state} mutationCount={mutationCount} />
-        </TabPanel>
-        <TabPanel>
-          <Browse pk={pk} state={state} />
-        </TabPanel>
-        <TabPanel>
-          <Search pk={pk} state={state} />
-        </TabPanel>
-        <TabPanel>
-          <PkQuery pk={pk} state={state} />
-        </TabPanel>
-      </Tabs>
-      <Footer />
-    </>
-  );
+        )}
+        {tabN === 1 && <Browse pk={pk} state={state} />}
+        {tabN === 2 && <Search pk={pk} state={state} />}
+        {tabN === 3 && <PkQuery pk={pk} state={state} />}
+        <Footer/>
+      </div>
+    );
+  });
+  return <RootComponent />;
 }
