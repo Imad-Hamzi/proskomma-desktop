@@ -8,7 +8,7 @@ body {
     position: relative;
     height: 800px;
     width: 1000px;
-    font-family: sans-serif;
+    font-family: roboto, sans-serif;
     overflow-y: hidden;
     margin: 0;
 }

@@ -15,25 +15,6 @@ import PkQuery from './pk_query';
 import icon from '../assets/icons/48x48.ico';
 
 const pk = new UWProskomma();
-const mappingQueries = [];
-const translationSources = [
-  '../data/unfoldingWord_en_ult_pkserialized.json',
-  '../data/unfoldingWord_en_ust_pkserialized.json',
-  '../data/unfoldingWord_hbo_uhb_pkserialized.json',
-  '../data/unfoldingWord_grc_ugnt_pkserialized.json',
-  '../data/ebible_en_web_pkserialized.json',
-  '../data/ebible_fr_lsg_pkserialized.json',
-  '../data/dbl_en_drh_pkserialized.json',
-].map(ts => path.resolve(__dirname, ts));
-
-for (const [docSetId, vrsSource] of [
-  ['ebible/en_web', '../data/web.vrs'],
-  ['dbl/en_drh', '../data/drh.vrs'],
-]) {
-  const vrs = fse.readFileSync(path.resolve(__dirname, vrsSource)).toString();
-  const mutationQuery = `mutation { setVerseMapping(docSetId: "${docSetId}" vrsSource: """${vrs}""")}`;
-  mappingQueries.push(mutationQuery);
-}
 const currentWindow = remote.getCurrentWindow();
 
 export default function App() {
@@ -80,6 +61,25 @@ export default function App() {
       set: setMutationCount,
     },
   };
+  const mappingQueries = [];
+  const translationSources = [
+    '../data/unfoldingWord_en_ult_pkserialized.json',
+    '../data/unfoldingWord_en_ust_pkserialized.json',
+    '../data/unfoldingWord_hbo_uhb_pkserialized.json',
+    '../data/unfoldingWord_grc_ugnt_pkserialized.json',
+    '../data/ebible_en_web_pkserialized.json',
+    '../data/ebible_fr_lsg_pkserialized.json',
+    '../data/dbl_en_drh_pkserialized.json',
+  ].map(ts => path.resolve(__dirname, ts));
+
+  for (const [docSetId, vrsSource] of [
+    ['ebible/en_web', '../data/web.vrs'],
+    ['dbl/en_drh', '../data/drh.vrs'],
+  ]) {
+    const vrs = fse.readFileSync(path.resolve(__dirname, vrsSource)).toString();
+    const mutationQuery = `mutation { setVerseMapping(docSetId: "${docSetId}" vrsSource: """${vrs}""")}`;
+    mappingQueries.push(mutationQuery);
+  }
   useEffect(() => {
     const onMaximized = () => setMaximized(true);
     const onRestore = () => setMaximized(false);
