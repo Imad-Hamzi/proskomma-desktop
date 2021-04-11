@@ -1,9 +1,15 @@
 import React from 'react';
 
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+
+import styles from './styles';
 import { renderVersesItems } from './render_utils';
 import BrowseChapterNavigation from "./BrowseChapterNavigation";
 
-const BrowseChapter = (props) => {
+const BrowseChapter = withStyles(styles) (
+  (props) => {
+  const { classes } = props;
   const [result, setResult] = React.useState({});
   const chapterQueryTemplate =
     '{' +
@@ -41,40 +47,42 @@ const BrowseChapter = (props) => {
     props.state.renderMode.get,
   ]);
   if (result.data && result.data.docSet) {
-    const scriptureTitle = <>{result.data.docSet.document.title} {props.state.selectedChapter.get}</>;
+    const scriptureTitle = `Ch ${props.state.selectedChapter.get}`;
     const scriptureText =
       'cv' in result.data.docSet.document ? (
-        <p>{
+        <Typography variant="body1">{
           renderVersesItems(
             result.data.docSet.document.cv[0].items,
             props.state.selectedVerse.set,
             props.state.renderMode.set
           )
-        }</p>
+        }</Typography>
       ) : (
         ''
       );
     return (
       <>
-        <h3>
+        <div>
           <BrowseChapterNavigation
             state={props.state}
             direction="previous"
             destination={result.data.docSet.document.nav.previousChapter}
           />
-          {scriptureTitle}
+          <Typography variant="body1" display="inline" className={classes.browseNavigationText}>
+            {scriptureTitle}
+          </Typography>
           <BrowseChapterNavigation
             state={props.state}
             direction="next"
             destination={result.data.docSet.document.nav.nextChapter}
           />
           {' (click on verse number to select verse)'}
-        </h3>
+        </div>
         {scriptureText}
       </>
     );
   }
   return <div>No docSet selected</div>;
-};
+});
 
 export default BrowseChapter;

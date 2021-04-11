@@ -49,6 +49,17 @@ const styles = (theme) => ({
   docSetsSection: {
     marginTop: '20px',
   },
+  browseModeButton: {
+    marginLeft: "1em",
+    float: "right",
+  },
+  browseNavigationText: {
+    fontWeight: "bold",
+    fontSize: "larger",
+  },
+  browseBlocksScriptureText: {
+    marginTop: "5px",
+  },
 });
 
 export default styles;

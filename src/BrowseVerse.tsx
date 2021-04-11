@@ -1,9 +1,14 @@
 import React from 'react';
 
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+
+import styles from './styles';
 import BrowseVerseNavigation from './BrowseVerseNavigation';
 import BrowseModeButton from './BrowseModeButton';
 
-const BrowseVerse = (props) => {
+const BrowseVerse = withStyles(styles)((props) => {
+  const { classes } = props;
   const [result, setResult] = React.useState({});
   const verseQueryTemplate =
     '{' +
@@ -39,48 +44,47 @@ const BrowseVerse = (props) => {
     props.state.renderMode.get,
   ]);
   if (result.data && result.data.docSet && result.data.docSet.document) {
-    const scriptureTitle = (
-      <>
-        {result.data.docSet.document.title}
-        {` ${props.state.selectedChapter.get}:${props.state.selectedVerse.get}`}
-      </>
-    );
+    const scriptureTitle = `${props.state.selectedChapter.get}:${props.state.selectedVerse.get}`;
     const scriptureText =
       'cv' in result.data.docSet.document ? (
-        <p>{result.data.docSet.document.cv[0].text}</p>
+        <Typography variant="body1">
+          {result.data.docSet.document.cv[0].text}
+        </Typography>
       ) : (
         ''
       );
     return (
       <>
-        <h3>
+        <div>
           <BrowseVerseNavigation
             state={props.state}
             direction="previous"
             destination={result.data.docSet.document.nav.previousVerse}
           />
-          {scriptureTitle}
+          <Typography variant="body1" display="inline" className={classes.browseNavigationText}>
+            {scriptureTitle}
+          </Typography>
           <BrowseVerseNavigation
             state={props.state}
             direction="next"
             destination={result.data.docSet.document.nav.nextVerse}
           />
           <BrowseModeButton
-            newMode="chapter"
-            setRenderMode={props.state.renderMode.set}
-            label="View Whole Chapter"
-          />
-          <BrowseModeButton
             newMode="blocks"
             setRenderMode={props.state.renderMode.set}
             label="View Paragraphs"
           />
-        </h3>
+          <BrowseModeButton
+            newMode="chapter"
+            setRenderMode={props.state.renderMode.set}
+            label="View Whole Chapter"
+          />
+        </div>
         {scriptureText}
       </>
     );
   }
   return <div>No docSet selected</div>;
-};
+});
 
 export default BrowseVerse;

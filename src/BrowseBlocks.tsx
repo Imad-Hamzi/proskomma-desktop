@@ -1,9 +1,13 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 
+import styles from './styles';
 import { renderVersesItems } from './render_utils';
 import BrowseModeButton from './BrowseModeButton';
 
-const BrowseBlocks = (props) => {
+const BrowseBlocks = withStyles(styles)((props) => {
+  const { classes } = props;
   const [result, setResult] = React.useState({});
   const blocksQueryTemplate =
     '{' +
@@ -39,33 +43,32 @@ const BrowseBlocks = (props) => {
   ]);
   if (result.data && result.data.docSet) {
     const scriptureTitle = (
-      <h3>
-        {`Paragraph(s) containing ${result.data.docSet.document.title}`}
-        {` ${props.state.selectedChapter.get}:${props.state.selectedVerse.get}`}
-        <BrowseModeButton
-          newMode="verse"
-          setRenderMode={props.state.renderMode.set}
-          label="View Verse"
-        />
+      <Typography variant="body1" className={classes.browseNavigationText}>
+        {`Paragraph(s) containing ${props.state.selectedChapter.get}:${props.state.selectedVerse.get} `}
         <BrowseModeButton
           newMode="chapter"
           setRenderMode={props.state.renderMode.set}
           label="View Chapter"
         />
-      </h3>
+        <BrowseModeButton
+          newMode="verse"
+          setRenderMode={props.state.renderMode.set}
+          label="View Verse"
+        />
+      </Typography>
     );
     const scriptureText =
       'mainSequence' in result.data.docSet.document
         ? [
             ...result.data.docSet.document.mainSequence.blocks.entries(),
           ].map((b) => (
-            <p key={b[0]}>
+            <Typography variant="body1" key={b[0]} className={classes.browseBlocksScriptureText}>
               {renderVersesItems(
                 b[1].items,
                 props.state.selectedVerse.set,
                 props.state.renderMode.set
               )}
-            </p>
+            </Typography>
           ))
         : '';
     return (
@@ -75,7 +78,7 @@ const BrowseBlocks = (props) => {
       </>
     );
   }
-  return <div>No docSet selected</div>;
-};
+  return <Typography variant="body1">No docSet selected</Typography>;
+});
 
 export default BrowseBlocks;
