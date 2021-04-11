@@ -15,12 +15,10 @@ const DocSets = (props) => {
     '}';
   React.useEffect(() => {
     const doQuery = async () => {
-      const res = await props.pk.gqlQuery(homeQuery);
-      setResult(res);
-      // console.log(res);
+      return await props.pk.gqlQuery(homeQuery);
     };
-    doQuery();
-  }, [props.state.mutationCount]);
+    doQuery().then((res) => {setResult(res)});
+  }, [props.mutationCount]);
   return (
     <div className="content scrollableTabPanel">
       <p>
