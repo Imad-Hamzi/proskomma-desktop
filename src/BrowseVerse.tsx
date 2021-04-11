@@ -1,7 +1,7 @@
 import React from 'react';
 
-import BrowseVerseNavigation from './browse_verse_navigation';
-import BrowseModeButton from './browse_mode_button';
+import BrowseVerseNavigation from './BrowseVerseNavigation';
+import BrowseModeButton from './BrowseModeButton';
 
 const BrowseVerse = (props) => {
   const [result, setResult] = React.useState({});

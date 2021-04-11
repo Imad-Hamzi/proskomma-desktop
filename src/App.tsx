@@ -15,11 +15,11 @@ import Tab from '@material-ui/core/Tab';
 import { UWProskomma } from 'uw-proskomma';
 
 import styles from './styles';
-import Footer from './footer';
-import DocSets from './doc_sets';
-import Browse from './browse';
-import Search from './search';
-import PkQuery from './pk_query';
+import Footer from './Footer';
+import DocSets from './DocSets';
+import Browse from './Browse';
+import Search from './Search';
+import PkQuery from './PkQuery';
 import icon from '../assets/icons/48x48.ico';
 
 const currentWindow = remote.getCurrentWindow();

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { renderVersesItems } from './render_utils';
-import BrowseModeButton from './browse_mode_button';
+import BrowseModeButton from './BrowseModeButton';
 
 const BrowseBlocks = (props) => {
   const [result, setResult] = React.useState({});

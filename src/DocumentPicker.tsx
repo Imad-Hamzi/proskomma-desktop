@@ -1,5 +1,5 @@
 import React from 'react';
-import DocumentLink from "./document_link";
+import DocumentLink from './DocumentLink';
 
 const DocumentPicker = (props) => {
   return (

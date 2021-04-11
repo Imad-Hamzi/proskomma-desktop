@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { renderVersesItems } from './render_utils';
-import BrowseChapterNavigation from "./browse_chapter_navigation";
+import BrowseChapterNavigation from "./BrowseChapterNavigation";
 
 const BrowseChapter = (props) => {
   const [result, setResult] = React.useState({});

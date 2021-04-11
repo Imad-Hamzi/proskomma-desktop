@@ -1,8 +1,8 @@
 import React from 'react';
 
-import BrowseVerse from './browse_verse';
-import BrowseChapter from './browse_chapter';
-import BrowseBlocks from './browse_blocks';
+import BrowseVerse from './BrowseVerse';
+import BrowseChapter from './BrowseChapter';
+import BrowseBlocks from './BrowseBlocks';
 import DocumentPicker from './DocumentPicker';
 
 const Browse = (props) => {
