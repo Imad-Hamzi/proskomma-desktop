@@ -3,6 +3,8 @@ const styles = (theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
+  toolbarMargin:
+    theme.mixins.toolbar,
   flex: {
     flex: 1,
   },
@@ -59,6 +61,29 @@ const styles = (theme) => ({
   },
   browseBlocksScriptureText: {
     marginTop: "5px",
+  },
+  pre: {
+    whiteSpace: "pre",
+    fontFamily: "monospace",
+  },
+  pkQueryTextarea: {
+    width: "100%",
+  },
+  pkQueryButton: {
+    float: "right",
+  },
+  pkQueryPreviousQueries: {
+    color: "blue",
+    textDecoration: "underline",
+    fontSize: "smaller",
+    marginTop: 0,
+    marginBottom: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  pkQueryPreviousQueriesTitle: {
+    marginTop: '20px',
+    fontWeight: 'bold',
   },
 });
 

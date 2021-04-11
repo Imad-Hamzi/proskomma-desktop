@@ -19,6 +19,7 @@ import Footer from './Footer';
 import DocSets from './DocSets';
 import Browse from './Browse';
 import Search from './Search';
+import VerseMapping from './VerseMapping';
 import PkQuery from './PkQuery';
 import icon from '../assets/icons/48x48.ico';
 
@@ -52,7 +53,13 @@ export default function App() {
   const [tabN, setTabN] = useState(0);
   const [selectedDocSet, setSelectedDocSet] = useState('');
   const [selectedDocument, setSelectedDocument] = useState('');
-  const [savedQueries, setSavedQueries] = React.useState([]);
+  const [savedQueries, setSavedQueries] = React.useState([
+    '{ processor packageVersion nDocSets nDocuments }',
+    '{docSets { selectors { key value } documents { headers { key value } } } }',
+    '{docSet(id:"unfoldingWord/en_ust") { document(bookCode:"MAT") { bookCode: header(id: "bookCode") mainSequence { blocks { text } } } } }',
+    '{docSet(id:"unfoldingWord/en_ust") { document(bookCode:"MAT") { cv(chapter:"28" verses:"20") { text items { type subType payload } } } } }',
+    '{docSet(id:"unfoldingWord/en_ust") { document(bookCode:"MAT") { cvNavigation(chapter:"28" verse:"20") { previousChapter previousVerse { chapter verse } nextVerse { chapter verse } nextChapter } } } }',
+  ]);
   const [selectedBook, setSelectedBook] = React.useState('');
   const [selectedChapter, setSelectedChapter] = React.useState('1');
   const [selectedVerse, setSelectedVerse] = React.useState('1');
@@ -155,7 +162,8 @@ export default function App() {
           <Tabs value={tabN} onChange={onTabChange}>
             <Tab label="DocSets" />
             <Tab label="Browse" />
-            <Tab label="Search" />
+            <Tab label="Search" disabled={true} />
+            <Tab label={"Verse Mapping"} />
             <Tab label="Raw Query" />
           </Tabs>
         </AppBar>
@@ -165,7 +173,8 @@ export default function App() {
           )}
           {tabN === 1 && <Browse pk={pk} state={state} />}
           {tabN === 2 && <Search pk={pk} state={state} />}
-          {tabN === 3 && <PkQuery pk={pk} state={state} />}
+          {tabN === 3 && <VerseMapping pk={pk} state={state} />}
+          {tabN === 4 && <PkQuery pk={pk} state={state} />}
         </Container>
         <Footer />
       </div>

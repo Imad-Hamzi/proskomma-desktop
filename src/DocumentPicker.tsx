@@ -5,13 +5,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
-/*
-props.state.selectedDocument.set(props.doc.id);
-props.state.selectedBook.set(props.doc.bookCode);
-props.state.selectedChapter.set('1');
-props.state.selectedVerse.set('1');
- */
-
 const DocumentPicker = (props) => {
   const changeSelectedDocument = (e) => {
     const newDocumentId = e.target.value;

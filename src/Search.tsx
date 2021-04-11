@@ -8,7 +8,7 @@ const simpleSearchQueryTemplate =
   '       title: header(id: "toc2")' +
   '       mainSequence {' +
   '         blocks(withMatchingChars: ["%searchTerms%"]) {' +
-  '           scopeLabels tokens { payload } text' +
+  '           scopeLabels tokens { payload }' +
   '         }' +
   '       }' +
   '    }' +
@@ -47,7 +47,7 @@ const Search = (props) => {
 
   if (result.data && result.data.docSet && result.data.docSet.documents) {
     const matches = result.data.docSet.matches.map(m => m.matched);
-    
+
     return (
       <>
         <textarea
@@ -55,7 +55,7 @@ const Search = (props) => {
           cols="50"
           rows="3"
           value={searchTerms}
-          onChange={async (event) => handleChange(event, setSearchTerms)} 
+          onChange={async (event) => handleChange(event, setSearchTerms)}
         >
         </textarea>
         <div className="content scrollableTabPanel">
@@ -81,7 +81,7 @@ const Search = (props) => {
                 </ul>
               </div>
             ))}
-          <div>{JSON.stringify(result, null, 2)}</div>
+          <div>{'' || JSON.stringify(result, null, 2)}</div>
         </div>
       </>
     );

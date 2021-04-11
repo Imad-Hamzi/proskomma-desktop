@@ -60,7 +60,7 @@ const Browse = withStyles(styles)((props) => {
         <BrowseBlocks
           pk={props.pk}
           state={props.state}
-git st        />
+        />
       );
       break;
     default:
