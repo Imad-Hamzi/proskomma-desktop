@@ -8,15 +8,13 @@ import { remote } from 'electron';
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
+import Container from '@material-ui/core/Container';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-
-// import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
-// import 'react-tabs/style/react-tabs.css';
 
 import { UWProskomma } from 'uw-proskomma';
 
+import styles from './styles';
 import Footer from './footer';
 import DocSets from './doc_sets';
 import Browse from './browse';
@@ -131,19 +129,6 @@ export default function App() {
     );
   }, []);
 
-  const styles = (theme) => ({
-    root: {
-      flexGrow: 1,
-      backgroundColor: theme.palette.background.paper,
-    },
-    flex: {
-      flex: 1,
-    },
-    tabContent: {
-      padding: theme.spacing(2),
-    },
-  });
-
   const RootComponent = withStyles(styles)((props) => {
     const { classes } = props;
     const onTabChange = (e, v) => {
@@ -151,6 +136,16 @@ export default function App() {
     };
     return (
       <div className={classes.root}>
+        <TitleBar
+          title="Chaliki (powered by Proskomma)"
+          iconSrc={icon}
+          currentWindow={currentWindow}
+          onMaximize={handleMaximize}
+          onDoubleClick={handleMaximize}
+          onMinimize={() => currentWindow.minimize()}
+          onClose={() => currentWindow.close()}
+          maximized={maximized}
+        />
         <AppBar position="static">
           <Tabs value={tabN} onChange={onTabChange}>
             <Tab label="DocSets" />
@@ -159,13 +154,15 @@ export default function App() {
             <Tab label="Raw Query" />
           </Tabs>
         </AppBar>
-        {tabN === 0 && (
-          <DocSets pk={pk} state={state} mutationCount={mutationCount} />
-        )}
-        {tabN === 1 && <Browse pk={pk} state={state} />}
-        {tabN === 2 && <Search pk={pk} state={state} />}
-        {tabN === 3 && <PkQuery pk={pk} state={state} />}
-        <Footer/>
+        <Container className={classes.content}>
+          {tabN === 0 && (
+            <DocSets pk={pk} state={state} mutationCount={mutationCount} />
+          )}
+          {tabN === 1 && <Browse pk={pk} state={state} />}
+          {tabN === 2 && <Search pk={pk} state={state} />}
+          {tabN === 3 && <PkQuery pk={pk} state={state} />}
+        </Container>
+        <Footer />
       </div>
     );
   });
