@@ -162,7 +162,7 @@ export default function App() {
           <Tabs value={tabN} onChange={onTabChange}>
             <Tab label="DocSets" />
             <Tab label="Browse" />
-            <Tab label="Search" disabled={true} />
+            <Tab label="Search" />
             <Tab label={"Verse Mapping"} />
             <Tab label="Raw Query" />
           </Tabs>

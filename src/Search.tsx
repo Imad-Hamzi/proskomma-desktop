@@ -1,5 +1,8 @@
 import React from 'react';
 
+import {withStyles} from '@material-ui/core/styles';
+import styles from './styles';
+
 const simpleSearchQueryTemplate =
   '{' +
   '  docSet(id:"%docSetId%") {' +
@@ -7,94 +10,102 @@ const simpleSearchQueryTemplate =
   '       bookCode: header(id: "bookCode")' +
   '       title: header(id: "toc2")' +
   '       mainSequence {' +
-  '         blocks(withMatchingChars: ["%searchTerms%"]) {' +
+  '         blocks(withMatchingChars: [%searchTerm%]) {' +
   '           scopeLabels tokens { payload }' +
   '         }' +
   '       }' +
   '    }' +
-  '    matches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:"%searchTerms%") { matched }' +
+  '    matches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:%searchTerm%) { matched }' +
   '  }' +
   '}';
 
-const handleChange = (ev, setSearchTerms) => {
-  if (ev) {
-    setSearchTerms(ev.target.value);
-  }
-};
-
-const Search = (props) => {
+const Search = withStyles(styles)((props) => {
   const [result, setResult] = React.useState({});
-  const [query, setQuery] = React.useState(simpleSearchQueryTemplate);
-  const [searchTerms, setSearchTerms] = React.useState("mother")
+  const [query, setQuery] = React.useState('');
+  const [searchTerm, setSearchTerm] = React.useState('mothers');
 
+  // Build new query when searchTerms change
+  React.useEffect(() => {
+    if (props.state.selectedDocSet) {
+      setQuery(
+        simpleSearchQueryTemplate
+          .replace(/%docSetId%/g, props.state.selectedDocSet.get)
+          .replace(
+            /%searchTerm%/g,
+            `"${searchTerm}"`
+          )
+      );
+    }
+  }, [searchTerm]);
+
+  // Run query when query or docSet changes
   React.useEffect(() => {
     const doQuery = async () => {
-      if (props.state.selectedDocSet) {
-        const searchQuery = query.replace(
-          /%docSetId%/g,
-          props.state.selectedDocSet.get
-        ).replace(/%searchTerms%/g, searchTerms);
-        const res = await props.pk.gqlQuery(searchQuery);
-        setResult(res);
-
-        // console.log(searchQuery, JSON.stringify(res));
-        console.log('Here is the searchQuery: ')
-        console.log(JSON.stringify(searchQuery))
-      }
+      const res = await props.pk.gqlQuery(query);
+      setResult(res);
     };
     doQuery();
-  }, [props.state.selectedDocSet, searchTerms]);
+  }, [props.state.selectedDocSet.get, query]);
 
-  if (result.data && result.data.docSet && result.data.docSet.documents) {
-    const matches = result.data.docSet.matches.map(m => m.matched);
+  const handleChange = (ev) => {
+    if (ev) {
+      setSearchTerm(ev.target.value);
+    }
+  };
 
-    return (
-      <>
-        <textarea
-          className="searchBox"
-          cols="50"
-          rows="3"
-          value={searchTerms}
-          onChange={async (event) => handleChange(event, setSearchTerms)}
-        >
-        </textarea>
-        <div className="content scrollableTabPanel">
-          {result.data.docSet.documents
-            .filter((d) => d.mainSequence.blocks.length > 0)
-            .map((d) => (
-              <div key={d.id}>
-                <h4>{`${d.title} (${d.mainSequence.blocks.length})`}</h4>
-                <ul>
-                  {d.mainSequence.blocks.map((b) => (
-                    <li>
-                      <div>
-                        {b.scopeLabels
-                          .filter((sl) => ['chapter', 'verse'].includes(sl.split('/')[0])
-                          )
-                          .join(', ')}
-                      </div>
-                      <div>
-                        {b.tokens.map(t => matches.includes(t.payload) ? <b>{t.payload}</b> : t.payload)}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          <div>{'' || JSON.stringify(result, null, 2)}</div>
-        </div>
-      </>
-    );
+  let matchRecords = [];
+  if (result && result.data && result.data.docSet) {
+    const matchableTerms = result.data.docSet.matches.map(m => m.matched);
+    for (
+      const matchingDocument of
+      result.data.docSet.documents.filter(d => d.mainSequence.blocks.length > 0)
+      ) {
+      for (const matchingBlock of matchingDocument.mainSequence.blocks) {
+        matchRecords.push([
+          matchingDocument.title,
+          matchingBlock.scopeLabels
+            .filter(sl => sl.startsWith('chapter'))
+            .map(sl => sl.split('/')[1]),
+          matchingBlock.scopeLabels
+            .filter(sl => sl.startsWith('verse/'))
+            .map(sl => sl.split('/')[1])
+            .map(v => parseInt(v)),
+          matchingBlock.tokens
+            .map(t => t.payload)
+            .map(t => matchableTerms.includes(t) ? <b>{t}</b> : t)
+        ]);
+      }
+    }
   }
 
-  return <textarea
-            className="searchBox"
-            cols="50"
-            rows="3"
-            value={searchTerms}
-            onChange={async (event) => handleChange(event, setSearchTerms)}
-          >
-          </textarea>
-};
+  return (
+    <div className="content scrollableTabPanel">
+      <textarea
+        className="searchBox"
+        cols="50"
+        rows="3"
+        value={searchTerm}
+        onChange={handleChange}
+      />
+      {
+        matchRecords &&
+        <div>
+          {
+            [...matchRecords.entries()]
+              .map(
+              mr =>
+                <div key={mr[0]}>
+                  <div>
+                    <b><i>{`${mr[1][0]} ${mr[1][1].join(', ')}:${Math.min(...mr[1][2])}${mr[1][2].length > 1 ? `-${Math.max(...mr[1][2])}` : ''}`}</i></b>
+                  </div>
+                  <div>{mr[1][3]}</div>
+                </div>
+            )
+          }
+        </div>
+      }
+    </div>
+  )
+});
 
 export default Search;
