@@ -13,15 +13,16 @@ const simpleSearchQueryTemplate =
   '{' +
   '  docSet(id:"%docSetId%") {' +
   '    documents {' +
+  '       id' +
   '       bookCode: header(id: "bookCode")' +
   '       title: header(id: "toc2")' +
   '       mainSequence {' +
-  '         blocks(withMatchingChars: [%searchTerm%]) {' +
+  '         blocks(withMatchingChars: [%searchTerms%]) {' +
   '           scopeLabels tokens { payload }' +
   '         }' +
   '       }' +
   '    }' +
-  '    matches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:%searchTerm%) { matched }' +
+  '    matches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:"%searchTermsRegex%") { matched }' +
   '  }' +
   '}';
 
@@ -29,19 +30,21 @@ const Search = withStyles(styles)((props) => {
   const {classes} = props;
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [searchString, setSearchString] = React.useState('mothers');
+  const [searchTerms, setSearchTerms] = React.useState('');
+  const [searchString, setSearchString] = React.useState('');
 
   // Build new query when searchTerms change
   React.useEffect(() => {
     if (props.state.selectedDocSet) {
+      const searchTermsArray = searchTerms.split(/ +/).map(st => st.trim());
       setQuery(
         simpleSearchQueryTemplate
           .replace(/%docSetId%/g, props.state.selectedDocSet.get)
-          .replace(/%searchTerm%/g, `"${searchTerm}"`)
+          .replace(/%searchTerms%/g, searchTermsArray.map(st => `"${st}"`).join(', '))
+          .replace(/%searchTermsRegex%/g, searchTermsArray.map(st => `(${st})`).join('|'))
       );
     }
-  }, [searchTerm]);
+  }, [searchTerms]);
 
   // Run query when query or docSet changes
   React.useEffect(() => {
@@ -49,13 +52,13 @@ const Search = withStyles(styles)((props) => {
       const res = await props.pk.gqlQuery(query);
       setResult(res);
     };
-    if (searchTerm.trim().length > 0) {
+    if (searchTerms.trim().length > 0) {
       doQuery();
     }
   }, [props.state.selectedDocSet.get, query]);
 
   const handleButtonClick = () => {
-    setSearchTerm(searchString);
+    setSearchTerms(searchString);
   };
 
   const handleInput = (ev) => {
@@ -70,6 +73,8 @@ const Search = withStyles(styles)((props) => {
     )) {
       for (const matchingBlock of matchingDocument.mainSequence.blocks) {
         matchRecords.push([
+          matchingDocument.id,
+          matchingDocument.bookCode,
           matchingDocument.title,
           matchingBlock.scopeLabels
             .filter((sl) => sl.startsWith('chapter'))
@@ -78,10 +83,16 @@ const Search = withStyles(styles)((props) => {
             .filter((sl) => sl.startsWith('verse/'))
             .map((sl) => sl.split('/')[1])
             .map((v) => parseInt(v)),
-          matchingBlock.tokens
-            .map((t) => t.payload)
-            .map((t) => (matchableTerms.includes(t) ?
-              <Typography variant="inherit" display="inline" className={classes.boldPara}>{t}</Typography> : t)),
+          [...matchingBlock.tokens.map((t) => t.payload).entries()]
+            .map((t) =>
+              <Typography
+                key={t[0]}
+                variant="inherit"
+                display="inline"
+                className={matchableTerms.includes(t[1]) ? classes.boldPara : classes.para}
+              >
+                {t[1]}
+              </Typography>),
         ]);
       }
     }
@@ -105,24 +116,40 @@ const Search = withStyles(styles)((props) => {
           Search
         </Button>
       </div>
-      {matchRecords && (
+      {matchRecords && matchRecords.length > 0 && (
         <List>
           {[...matchRecords.entries()].map((mr) => (
-            <ListItem key={mr[0]} button dense>
+            <ListItem
+              key={mr[0]}
+              button
+              dense
+              onClick={
+                () => {
+                  props.state.selectedDocument.set(mr[1][0]);
+                  props.state.selectedBook.set(mr[1][1]);
+                  props.state.selectedChapter.set(mr[1][3][0]);
+                  props.state.selectedVerse.set(`${Math.min(...mr[1][4])}`);
+                  props.state.tabN.set(1);
+                  props.state.renderMode.set('blocks');
+                }
+              }
+            >
               <ListItemText
                 primary={<Typography variant="body1" className={classes.boldItalicPara}>
-                  {`${mr[1][0]} ${mr[1][1].join(', ')}:${Math.min(
-                    ...mr[1][2]
+                  {`${mr[1][2]} ${mr[1][3].join(', ')}:${Math.min(
+                    ...mr[1][4]
                   )}${
-                    mr[1][2].length > 1 ? `-${Math.max(...mr[1][2])}` : ''
+                    mr[1][4].length > 1 ? `-${Math.max(...mr[1][4])}` : ''
                   }`}
                 </Typography>}
-                secondary={<Typography variant="body2">{mr[1][3]}</Typography>}
+                secondary={<Typography variant="body2">{mr[1][5]}</Typography>}
               />
             </ListItem>
           ))}
         </List>
       )}
+      {matchRecords && matchRecords.length === 0 && <Typography variant="body2">No matches - type search terms above, then click 'Search'</Typography>}
+      {!props.state.selectedDocSet.get && <Typography variant="body2">Please select a docSet</Typography>}
     </div>
   );
 });
