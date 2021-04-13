@@ -1,12 +1,17 @@
 import React from 'react';
 
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import styles from './styles';
 
 const simpleSearchQueryTemplate =
@@ -17,7 +22,10 @@ const simpleSearchQueryTemplate =
   '       bookCode: header(id: "bookCode")' +
   '       title: header(id: "toc2")' +
   '       mainSequence {' +
-  '         blocks(withMatchingChars: [%searchTerms%]) {' +
+  '         blocks(' +
+  '           withMatchingChars: [%searchTerms%]' +
+  '           allChars:%allChars%' +
+  '         ) {' +
   '           scopeLabels tokens { payload }' +
   '         }' +
   '       }' +
@@ -27,11 +35,13 @@ const simpleSearchQueryTemplate =
   '}';
 
 const Search = withStyles(styles)((props) => {
-  const { classes } = props;
+  const {classes} = props;
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
   const [searchTerms, setSearchTerms] = React.useState('');
   const [searchString, setSearchString] = React.useState('');
+  const [allChars, setAllChars] = React.useState(false);
+  const [from, setFrom] = React.useState(0);
 
   // Build new query when searchTerms change
   React.useEffect(() => {
@@ -48,13 +58,18 @@ const Search = withStyles(styles)((props) => {
             /%searchTermsRegex%/g,
             searchTermsArray.map((st) => `(${st})`).join('|')
           )
+          .replace(
+            /%allChars%/g,
+            allChars ? "true" : "false"
+          )
       );
     }
-  }, [searchTerms]);
+  }, [searchTerms, allChars]);
 
   // Run query when query or docSet changes
   React.useEffect(() => {
     const doQuery = async () => {
+      setFrom(0);
       const res = await props.pk.gqlQuery(query);
       setResult(res);
     };
@@ -72,12 +87,21 @@ const Search = withStyles(styles)((props) => {
   };
 
   const matchRecords = [];
+  let count = 0;
   if (result && result.data && result.data.docSet) {
     const matchableTerms = result.data.docSet.matches.map((m) => m.matched);
     for (const matchingDocument of result.data.docSet.documents.filter(
       (d) => d.mainSequence.blocks.length > 0
     )) {
       for (const matchingBlock of matchingDocument.mainSequence.blocks) {
+        if (count < from) {
+          count++;
+          continue;
+        }
+        if (count > (from + 20)) {
+          count++;
+          continue;
+        }
         matchRecords.push([
           matchingDocument.id,
           matchingDocument.bookCode,
@@ -102,6 +126,7 @@ const Search = withStyles(styles)((props) => {
             </Typography>
           )),
         ]);
+        count++;
       }
     }
   }
@@ -115,6 +140,15 @@ const Search = withStyles(styles)((props) => {
           value={searchString}
           onChange={handleInput}
         />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={allChars}
+              label="All Terms"
+              onChange={(ev) => setAllChars(ev.target.checked)}
+            />}
+          label="Require All Terms"
+        />
         <Button
           className={classes.searchButton}
           variant="outlined"
@@ -125,7 +159,25 @@ const Search = withStyles(styles)((props) => {
         </Button>
       </div>
       {matchRecords && matchRecords.length > 0 && (
-        <List>
+        <>
+          <IconButton
+            disabled={from === 0}
+            onClick={() => {
+              setFrom(Math.max(from - 20, 0))
+           }}
+          >
+            <ArrowBackIcon/>
+          </IconButton>
+          <Typography variant="h5" display="inline">{`Showing ${from} to ${Math.min(from + 19, count)} of ${count}`}</Typography>
+          <IconButton
+            disabled={(from + 20) > count}
+            onClick={() => {
+              setFrom(Math.min(from + 20, count))
+            }}
+          >
+            <ArrowForwardIcon/>
+          </IconButton>
+          <List>
           {[...matchRecords.entries()].map((mr) => (
             <ListItem
               key={mr[0]}
@@ -158,6 +210,7 @@ const Search = withStyles(styles)((props) => {
             </ListItem>
           ))}
         </List>
+        </>
       )}
       {matchRecords && matchRecords.length === 0 && (
         <Typography variant="body2">

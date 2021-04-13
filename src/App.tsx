@@ -135,7 +135,6 @@ export default function App() {
     };
     loadTranslations().then(() =>
       loadMappings().then(() => {
-        console.log('done');
         setMutationCount(1);
       })
     );
