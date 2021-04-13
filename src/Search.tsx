@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
@@ -27,7 +27,7 @@ const simpleSearchQueryTemplate =
   '}';
 
 const Search = withStyles(styles)((props) => {
-  const {classes} = props;
+  const { classes } = props;
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
   const [searchTerms, setSearchTerms] = React.useState('');
@@ -36,12 +36,18 @@ const Search = withStyles(styles)((props) => {
   // Build new query when searchTerms change
   React.useEffect(() => {
     if (props.state.selectedDocSet) {
-      const searchTermsArray = searchTerms.split(/ +/).map(st => st.trim());
+      const searchTermsArray = searchTerms.split(/ +/).map((st) => st.trim());
       setQuery(
         simpleSearchQueryTemplate
           .replace(/%docSetId%/g, props.state.selectedDocSet.get)
-          .replace(/%searchTerms%/g, searchTermsArray.map(st => `"${st}"`).join(', '))
-          .replace(/%searchTermsRegex%/g, searchTermsArray.map(st => `(${st})`).join('|'))
+          .replace(
+            /%searchTerms%/g,
+            searchTermsArray.map((st) => `"${st}"`).join(', ')
+          )
+          .replace(
+            /%searchTermsRegex%/g,
+            searchTermsArray.map((st) => `(${st})`).join('|')
+          )
       );
     }
   }, [searchTerms]);
@@ -83,16 +89,18 @@ const Search = withStyles(styles)((props) => {
             .filter((sl) => sl.startsWith('verse/'))
             .map((sl) => sl.split('/')[1])
             .map((v) => parseInt(v)),
-          [...matchingBlock.tokens.map((t) => t.payload).entries()]
-            .map((t) =>
-              <Typography
-                key={t[0]}
-                variant="inherit"
-                display="inline"
-                className={matchableTerms.includes(t[1]) ? classes.boldPara : classes.para}
-              >
-                {t[1]}
-              </Typography>),
+          [...matchingBlock.tokens.map((t) => t.payload).entries()].map((t) => (
+            <Typography
+              key={t[0]}
+              variant="inherit"
+              display="inline"
+              className={
+                matchableTerms.includes(t[1]) ? classes.boldPara : classes.para
+              }
+            >
+              {t[1]}
+            </Typography>
+          )),
         ]);
       }
     }
@@ -123,33 +131,42 @@ const Search = withStyles(styles)((props) => {
               key={mr[0]}
               button
               dense
-              onClick={
-                () => {
-                  props.state.selectedDocument.set(mr[1][0]);
-                  props.state.selectedBook.set(mr[1][1]);
-                  props.state.selectedChapter.set(mr[1][3][0]);
-                  props.state.selectedVerse.set(`${Math.min(...mr[1][4])}`);
-                  props.state.tabN.set(1);
-                  props.state.renderMode.set('blocks');
-                }
-              }
+              onClick={() => {
+                props.state.selectedDocument.set(mr[1][0]);
+                props.state.selectedBook.set(mr[1][1]);
+                props.state.selectedChapter.set(mr[1][3][0]);
+                props.state.selectedVerse.set(`${Math.min(...mr[1][4])}`);
+                props.state.tabN.set(1);
+                props.state.renderMode.set('blocks');
+              }}
             >
               <ListItemText
-                primary={<Typography variant="body1" className={classes.boldItalicPara}>
-                  {`${mr[1][2]} ${mr[1][3].join(', ')}:${Math.min(
-                    ...mr[1][4]
-                  )}${
-                    mr[1][4].length > 1 ? `-${Math.max(...mr[1][4])}` : ''
-                  }`}
-                </Typography>}
+                primary={
+                  <Typography
+                    variant="body1"
+                    className={classes.boldItalicPara}
+                  >
+                    {`${mr[1][2]} ${mr[1][3].join(', ')}:${Math.min(
+                      ...mr[1][4]
+                    )}${
+                      mr[1][4].length > 1 ? `-${Math.max(...mr[1][4])}` : ''
+                    }`}
+                  </Typography>
+                }
                 secondary={<Typography variant="body2">{mr[1][5]}</Typography>}
               />
             </ListItem>
           ))}
         </List>
       )}
-      {matchRecords && matchRecords.length === 0 && <Typography variant="body2">No matches - type search terms above, then click 'Search'</Typography>}
-      {!props.state.selectedDocSet.get && <Typography variant="body2">Please select a docSet</Typography>}
+      {matchRecords && matchRecords.length === 0 && (
+        <Typography variant="body2">
+          No matches - type search terms above, then click 'Search'
+        </Typography>
+      )}
+      {!props.state.selectedDocSet.get && (
+        <Typography variant="body2">Please select a docSet</Typography>
+      )}
     </div>
   );
 });
