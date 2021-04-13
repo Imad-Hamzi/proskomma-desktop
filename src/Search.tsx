@@ -1,6 +1,12 @@
 import React from 'react';
 
 import {withStyles} from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
 import styles from './styles';
 
 const simpleSearchQueryTemplate =
@@ -20,9 +26,11 @@ const simpleSearchQueryTemplate =
   '}';
 
 const Search = withStyles(styles)((props) => {
+  const {classes} = props;
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
-  const [searchTerm, setSearchTerm] = React.useState('mothers');
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchString, setSearchString] = React.useState('mothers');
 
   // Build new query when searchTerms change
   React.useEffect(() => {
@@ -30,10 +38,7 @@ const Search = withStyles(styles)((props) => {
       setQuery(
         simpleSearchQueryTemplate
           .replace(/%docSetId%/g, props.state.selectedDocSet.get)
-          .replace(
-            /%searchTerm%/g,
-            `"${searchTerm}"`
-          )
+          .replace(/%searchTerm%/g, `"${searchTerm}"`)
       );
     }
   }, [searchTerm]);
@@ -44,68 +49,82 @@ const Search = withStyles(styles)((props) => {
       const res = await props.pk.gqlQuery(query);
       setResult(res);
     };
-    doQuery();
+    if (searchTerm.trim().length > 0) {
+      doQuery();
+    }
   }, [props.state.selectedDocSet.get, query]);
 
-  const handleChange = (ev) => {
-    if (ev) {
-      setSearchTerm(ev.target.value);
-    }
+  const handleButtonClick = () => {
+    setSearchTerm(searchString);
   };
 
-  let matchRecords = [];
+  const handleInput = (ev) => {
+    setSearchString(ev.target.value);
+  };
+
+  const matchRecords = [];
   if (result && result.data && result.data.docSet) {
-    const matchableTerms = result.data.docSet.matches.map(m => m.matched);
-    for (
-      const matchingDocument of
-      result.data.docSet.documents.filter(d => d.mainSequence.blocks.length > 0)
-      ) {
+    const matchableTerms = result.data.docSet.matches.map((m) => m.matched);
+    for (const matchingDocument of result.data.docSet.documents.filter(
+      (d) => d.mainSequence.blocks.length > 0
+    )) {
       for (const matchingBlock of matchingDocument.mainSequence.blocks) {
         matchRecords.push([
           matchingDocument.title,
           matchingBlock.scopeLabels
-            .filter(sl => sl.startsWith('chapter'))
-            .map(sl => sl.split('/')[1]),
+            .filter((sl) => sl.startsWith('chapter'))
+            .map((sl) => sl.split('/')[1]),
           matchingBlock.scopeLabels
-            .filter(sl => sl.startsWith('verse/'))
-            .map(sl => sl.split('/')[1])
-            .map(v => parseInt(v)),
+            .filter((sl) => sl.startsWith('verse/'))
+            .map((sl) => sl.split('/')[1])
+            .map((v) => parseInt(v)),
           matchingBlock.tokens
-            .map(t => t.payload)
-            .map(t => matchableTerms.includes(t) ? <b>{t}</b> : t)
+            .map((t) => t.payload)
+            .map((t) => (matchableTerms.includes(t) ?
+              <Typography variant="inherit" display="inline" className={classes.boldPara}>{t}</Typography> : t)),
         ]);
       }
     }
   }
 
   return (
-    <div className="content scrollableTabPanel">
-      <textarea
-        className="searchBox"
-        cols="50"
-        rows="3"
-        value={searchTerm}
-        onChange={handleChange}
-      />
-      {
-        matchRecords &&
-        <div>
-          {
-            [...matchRecords.entries()]
-              .map(
-              mr =>
-                <div key={mr[0]}>
-                  <div>
-                    <b><i>{`${mr[1][0]} ${mr[1][1].join(', ')}:${Math.min(...mr[1][2])}${mr[1][2].length > 1 ? `-${Math.max(...mr[1][2])}` : ''}`}</i></b>
-                  </div>
-                  <div>{mr[1][3]}</div>
-                </div>
-            )
-          }
-        </div>
-      }
+    <div className={classes.tabContent}>
+      <div>
+        <TextField
+          className={classes.searchTerms}
+          label="Search Terms"
+          value={searchString}
+          onChange={handleInput}
+        />
+        <Button
+          className={classes.searchButton}
+          variant="outlined"
+          size="small"
+          onClick={handleButtonClick}
+        >
+          Search
+        </Button>
+      </div>
+      {matchRecords && (
+        <List>
+          {[...matchRecords.entries()].map((mr) => (
+            <ListItem key={mr[0]} button dense>
+              <ListItemText
+                primary={<Typography variant="body1" className={classes.boldItalicPara}>
+                  {`${mr[1][0]} ${mr[1][1].join(', ')}:${Math.min(
+                    ...mr[1][2]
+                  )}${
+                    mr[1][2].length > 1 ? `-${Math.max(...mr[1][2])}` : ''
+                  }`}
+                </Typography>}
+                secondary={<Typography variant="body2">{mr[1][3]}</Typography>}
+              />
+            </ListItem>
+          ))}
+        </List>
+      )}
     </div>
-  )
+  );
 });
 
 export default Search;

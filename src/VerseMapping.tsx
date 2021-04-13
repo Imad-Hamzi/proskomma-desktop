@@ -75,7 +75,7 @@ const VerseMapping = withStyles(styles)((props) => {
   }, [props.state.selectedBook.get, props.state.selectedChapter.get, props.state.selectedVerse.get, props.state.mutationCount.get]);
   return (
     result.data && result.data.mapped && result.data.mapped.document ?
-    <>
+    <div className={classes.tabContent}>
       <DocumentPicker docSet={result.data.mapped} state={props.state} />
       <div>
         <BrowseChapterNavigation
@@ -108,7 +108,7 @@ const VerseMapping = withStyles(styles)((props) => {
       <pre>
       {JSON.stringify(result.data, null, 2)}
     </pre>
-    </> : ''
+    </div> : ''
   );
 });
 

@@ -28,7 +28,7 @@ const DocSets = withStyles(styles)((props) => {
     });
   }, [props.mutationCount]);
   return (
-    <div className={classes.root}>
+    <div className={classes.tabContent}>
       <Typography variant="body2" className={classes.italicPara}>
         Click in Window, then F12, to Toggle Dev Tools.
       </Typography>

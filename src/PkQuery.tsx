@@ -35,7 +35,7 @@ const PkQuery = withStyles(styles)((props) => {
     doQuery();
   }, [query]);
   return (
-    <div className={classes.root}>
+    <div className={classes.tabContent}>
       {!result ? (
         <Typography variant="body1" className={classes.pre}>
           No Result

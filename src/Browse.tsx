@@ -67,7 +67,7 @@ const Browse = withStyles(styles)((props) => {
       throw new Error(`Unknown renderMode '${props.state.renderMode}'`);
   }
   return (
-    <div className={classes.root}>
+    <div className={classes.tabContent}>
       {!props.state.selectedDocSet.get || !ds || !ds.selectors ? (
         ''
       ) : (

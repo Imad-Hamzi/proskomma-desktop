@@ -43,6 +43,15 @@ const styles = (theme) => ({
     marginBottom: '3px',
     fontStyle: 'italic',
   },
+  boldPara: {
+    marginBottom: '3px',
+    fontWeight: 'bold',
+  },
+  boldItalicPara: {
+    marginBottom: '3px',
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+  },
   loading: {
     paddingLeft: '50px',
     paddingTop: '50px',
@@ -85,6 +94,12 @@ const styles = (theme) => ({
     marginTop: '20px',
     fontWeight: 'bold',
   },
+  searchTerms: {
+    width: '50%',
+  },
+  searchButton: {
+    float: 'right',
+  }
 });
 
 export default styles;
