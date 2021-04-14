@@ -6,10 +6,12 @@ import Typography from '@material-ui/core/Typography';
 import styles from '../styles';
 import BrowseVerseNavigation from './BrowseVerseNavigation';
 import BrowseModeButton from './BrowseModeButton';
+import InspectQuery from "./InspectQuery";
 
 const BrowseVerse = withStyles(styles)((props) => {
   const { classes } = props;
   const [result, setResult] = React.useState({});
+  const [query, setQuery] = React.useState('');
   const verseQueryTemplate =
     '{' +
     '  docSet(id:"%docSetId%") {' +
@@ -31,6 +33,7 @@ const BrowseVerse = withStyles(styles)((props) => {
           .replace(/%bookCode%/g, props.state.selectedBook.get)
           .replace(/%chapter%/g, props.state.selectedChapter.get)
           .replace(/%verse%/g, props.state.selectedVerse.get);
+        setQuery(browseQuery);
         const res = await props.pk.gqlQuery(browseQuery);
         setResult(res);
       }
@@ -68,6 +71,10 @@ const BrowseVerse = withStyles(styles)((props) => {
             state={props.state}
             direction="next"
             destination={result.data.docSet.document.nav.nextVerse}
+          />
+          <InspectQuery
+            state={props.state}
+            query={query}
           />
           <BrowseModeButton
             newMode="blocks"

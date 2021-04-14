@@ -7,6 +7,7 @@ import ListItem from '@material-ui/core/ListItem';
 
 import styles from '../styles';
 import DocSet from '../components/DocSet';
+import InspectQuery from "../components/InspectQuery";
 
 const DocSets = withStyles(styles)((props) => {
   const {classes} = props;
@@ -16,7 +17,7 @@ const DocSets = withStyles(styles)((props) => {
     '  processor packageVersion nDocSets nDocuments' +
     '  docSets {' +
     '    id hasMapping' +
-    '    documents { id bookCode: header(id:"bookCode")}' +
+    '    documents { id }' +
     '  }' +
     '}';
   React.useEffect(() => {
@@ -29,6 +30,10 @@ const DocSets = withStyles(styles)((props) => {
   }, [props.mutationCount]);
   return (
     <div className={classes.tabContent}>
+      <InspectQuery
+        state={props.state}
+        query={homeQuery}
+      />
       <Typography variant="body2" className={classes.italicPara}>
         Click in Window, then F12, to Toggle Dev Tools.
       </Typography>

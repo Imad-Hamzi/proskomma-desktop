@@ -6,11 +6,13 @@ import Typography from '@material-ui/core/Typography';
 import styles from '../styles';
 import { renderVersesItems } from '../render_utils';
 import BrowseChapterNavigation from "./BrowseChapterNavigation";
+import InspectQuery from "./InspectQuery";
 
 const BrowseChapter = withStyles(styles) (
   (props) => {
   const { classes } = props;
   const [result, setResult] = React.useState({});
+  const [query, setQuery] = React.useState('');
   const chapterQueryTemplate =
     '{' +
     '  docSet(id:"%docSetId%") {' +
@@ -37,6 +39,7 @@ const BrowseChapter = withStyles(styles) (
           .replace(/%docSetId%/g, props.state.selectedDocSet.get)
           .replace(/%bookCode%/g, props.state.selectedBook.get)
           .replace(/%chapter%/g, props.state.selectedChapter.get);
+        setQuery(browseQuery);
         const res = await props.pk.gqlQuery(browseQuery);
         console.log(res);
         setResult(res);
@@ -87,6 +90,10 @@ const BrowseChapter = withStyles(styles) (
             destination={result.data.docSet.document.nav.nextChapter}
           />
           {' (click on verse number to select verse)'}
+          <InspectQuery
+            state={props.state}
+            query={query}
+          />
         </div>
         {scriptureText}
       </>

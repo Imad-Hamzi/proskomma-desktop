@@ -12,6 +12,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+
+import InspectQuery from "../components/InspectQuery";
 import styles from '../styles';
 
 const simpleSearchQueryTemplate =
@@ -148,6 +150,10 @@ const Search = withStyles(styles)((props) => {
               onChange={(ev) => setAllChars(ev.target.checked)}
             />}
           label="Require All Terms"
+        />
+        <InspectQuery
+          state={props.state}
+          query={query}
         />
         <Button
           className={classes.searchButton}

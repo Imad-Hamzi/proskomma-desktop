@@ -84,11 +84,21 @@ const styles = (theme) => ({
   pkQueryPreviousQueries: {
     color: "blue",
     textDecoration: "underline",
-    fontSize: "smaller",
+    fontSize: "50%",
     marginTop: 0,
     marginBottom: 0,
     paddingTop: 0,
     paddingBottom: 0,
+  },
+  pkQueryPreviousQueryItem: {
+    color: "blue",
+    textDecoration: "underline",
+    fontSize: "x-small",
+    marginTop: 0,
+    marginBottom: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+    textIndent: '-2em',
   },
   pkQueryPreviousQueriesTitle: {
     marginTop: '20px',
@@ -125,6 +135,10 @@ const styles = (theme) => ({
   },
   gridItem: {
     border: "solid 1px black",
+  },
+  inspectQuery: {
+    float: "right",
+    marginLeft: "10px",
   }
 });
 

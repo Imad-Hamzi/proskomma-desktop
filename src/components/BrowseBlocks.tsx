@@ -5,10 +5,12 @@ import Typography from '@material-ui/core/Typography';
 import styles from '../styles';
 import { renderVersesItems } from '../render_utils';
 import BrowseModeButton from './BrowseModeButton';
+import InspectQuery from "./InspectQuery";
 
 const BrowseBlocks = withStyles(styles)((props) => {
   const { classes } = props;
   const [result, setResult] = React.useState({});
+  const [query, setQuery] = React.useState('');
   const blocksQueryTemplate =
     '{' +
     '  docSet(id:"%docSetId%") {' +
@@ -31,6 +33,7 @@ const BrowseBlocks = withStyles(styles)((props) => {
           .replace(/%bookCode%/g, props.state.selectedBook.get)
           .replace(/%chapter%/g, props.state.selectedChapter.get)
           .replace(/%verse%/g, props.state.selectedVerse.get);
+        setQuery(browseQuery);
         const res = await props.pk.gqlQuery(browseQuery);
         setResult(res);
       }
@@ -45,6 +48,10 @@ const BrowseBlocks = withStyles(styles)((props) => {
     const scriptureTitle = (
       <Typography variant="body1" className={classes.browseNavigationText}>
         {`Paragraph(s) containing ${props.state.selectedChapter.get}:${props.state.selectedVerse.get} `}
+        <InspectQuery
+          state={props.state}
+          query={query}
+        />
         <BrowseModeButton
           newMode="chapter"
           setRenderMode={props.state.renderMode.set}

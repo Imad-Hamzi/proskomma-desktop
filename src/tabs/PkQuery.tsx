@@ -87,7 +87,7 @@ const PkQuery = withStyles(styles)((props) => {
                     }}
                     className={classes.pkQueryPreviousQueries}
                   >
-                    <Typography variant="body2" display="inline">
+                    <Typography variant="body2" display="inline" className={classes.pkQueryPreviousQueryItem}>
                       {sq[1]}
                     </Typography>
                   </ListItem>
