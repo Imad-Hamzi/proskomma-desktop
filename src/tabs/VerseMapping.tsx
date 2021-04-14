@@ -2,6 +2,7 @@ import React from 'react';
 
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
 import styles from '../styles';
 import BrowseChapterNavigation from "../components/BrowseChapterNavigation";
@@ -105,9 +106,38 @@ const VerseMapping = withStyles(styles)((props) => {
           destination={result.data.mapped.document.nav.nextVerse}
         />
       </div>
-      <pre>
-      {JSON.stringify(result.data, null, 2)}
-    </pre>
+      <Grid container spacing="4" className={classes.grid}>
+        <Grid item xs="4" className={classes.gridItem}>
+          <Typography variant="h6">World English Bible</Typography>
+        </Grid>
+        <Grid item xs="4" className={classes.gridItem}>
+          <Typography variant="h6">Douay Rheims, with Mapping</Typography>
+        </Grid>
+        <Grid item xs="4" className={classes.gridItem}>
+          <Typography variant="h6">Douay Rheims, without Mapping</Typography>
+        </Grid>
+        <Grid item xs="4" className={classes.gridItem}>
+          <Typography variant="body1">{
+            result.data.mapped.document.web.length > 0 ?
+              result.data.mapped.document.web[0].text :
+              'No text found'
+          }</Typography>
+        </Grid>
+        <Grid item xs="4" className={classes.gridItem}>
+          <Typography variant="body1">{
+            result.data.mapped.document.drh.length > 0 ?
+              result.data.mapped.document.drh[0].text :
+              'No text found'
+          }</Typography>
+        </Grid>
+        <Grid item xs="4" className={classes.gridItem}>
+          <Typography variant="body1">{
+            result.data.unmapped.document.drh.length > 0 ?
+              result.data.unmapped.document.drh[0].text :
+              'No text found'
+            }</Typography>
+        </Grid>
+      </Grid>
     </div> : ''
   );
 });

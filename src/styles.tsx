@@ -118,6 +118,14 @@ const styles = (theme) => ({
     marginLeft: "4em",
     fontStyle: "italic",
   },
+  grid: {
+    border: "solid 1px black",
+    marginTop: "10px",
+    marginBottom: "10px",
+  },
+  gridItem: {
+    border: "solid 1px black",
+  }
 });
 
 export default styles;
