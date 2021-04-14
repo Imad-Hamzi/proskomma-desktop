@@ -112,6 +112,12 @@ export default function App() {
     '../data/ebible_en_web_pkserialized.json',
     '../data/ebible_fr_lsg_pkserialized.json',
     '../data/dbl_en_drh_pkserialized.json',
+    '../data/dbl_en_gnv_pkserialized.json',
+    '../data/dbl_en_kjv_pkserialized.json',
+    '../data/dbl_nl_nld1939_pkserialized.json',
+    '../data/dbl_spa_rv09_pkserialized.json',
+    '../data/dbl_grc_tr_pkserialized.json',
+    '../data/dbl_ben_irv_pkserialized.json',
   ].map((ts) => path.resolve(__dirname, ts));
 
   for (const [docSetId, vrsSource] of [
