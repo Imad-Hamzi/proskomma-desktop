@@ -99,7 +99,25 @@ const styles = (theme) => ({
   },
   searchButton: {
     float: 'right',
-  }
+  },
+  usfm_p: {
+    marginTop: "2px",
+    marginBottom: "2px",
+  },
+  usfm_d: {
+    marginTop: "2px",
+    fontWeight: "bold",
+  },
+  usfm_q: {
+    marginTop: "2px",
+    marginLeft: "2em",
+    fontStyle: "italic",
+  },
+  usfm_q2: {
+    marginTop: "2px",
+    marginLeft: "4em",
+    fontStyle: "italic",
+  },
 });
 
 export default styles;

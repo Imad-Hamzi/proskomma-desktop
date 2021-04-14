@@ -109,6 +109,7 @@ export default function App() {
     '../data/unfoldingWord_en_ust_pkserialized.json',
     '../data/unfoldingWord_hbo_uhb_pkserialized.json',
     '../data/unfoldingWord_grc_ugnt_pkserialized.json',
+    '../data/ebible_cmn_cmn_pkserialized.json',
     '../data/ebible_en_web_pkserialized.json',
     '../data/ebible_fr_lsg_pkserialized.json',
     '../data/dbl_en_drh_pkserialized.json',

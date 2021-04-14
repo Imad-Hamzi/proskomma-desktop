@@ -16,8 +16,11 @@ const BrowseChapter = withStyles(styles) (
     '  docSet(id:"%docSetId%") {' +
     '    document(bookCode: "%bookCode%") {' +
     '      title: header(id: "toc2")' +
-    '      cv (chapter:"%chapter%") {' +
-    '        items { type subType payload }' +
+    '      mainSequence {' +
+    '         blocks(withScriptureCV: "%chapter%") {' +
+    '            bs { payload }' +
+    '            items { type subType payload }' +
+    '         }' +
     '      }' +
     '      nav: cvNavigation(chapter:"%chapter%" verse: "1") {' +
     '        previousChapter' +
@@ -35,6 +38,7 @@ const BrowseChapter = withStyles(styles) (
           .replace(/%bookCode%/g, props.state.selectedBook.get)
           .replace(/%chapter%/g, props.state.selectedChapter.get);
         const res = await props.pk.gqlQuery(browseQuery);
+        console.log(res);
         setResult(res);
       }
     };
@@ -49,15 +53,21 @@ const BrowseChapter = withStyles(styles) (
   if (result.data && result.data.docSet) {
     const scriptureTitle = `Ch ${props.state.selectedChapter.get}`;
     const scriptureText =
-      'cv' in result.data.docSet.document ? (
-        <Typography variant="body1">{
-          renderVersesItems(
-            result.data.docSet.document.cv[0].items,
-            props.state.selectedVerse.set,
-            props.state.renderMode.set
-          )
-        }</Typography>
-      ) : (
+      'mainSequence' in result.data.docSet.document ?
+        <>
+          {[...result.data.docSet.document.mainSequence.blocks.entries()].map(
+          b => <Typography key={b[0]} variant="body1" className={classes[`usfm_${b[1].bs.payload.split('/')[1]}`]}>
+            {
+              renderVersesItems(
+                b[1].items,
+                props.state.selectedVerse.set,
+                props.state.renderMode.set
+              )
+            }
+        </Typography>
+          )}
+        </>
+       : (
         ''
       );
     return (
