@@ -7,7 +7,7 @@ import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
-import styles from './styles';
+import styles from '../styles';
 
 const handleChange = (ev, setQuery) => {
   if (ev) {

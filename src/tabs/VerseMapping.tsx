@@ -3,10 +3,10 @@ import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import styles from './styles';
-import BrowseChapterNavigation from "./BrowseChapterNavigation";
-import BrowseVerseNavigation from "./BrowseVerseNavigation";
-import DocumentPicker from "./DocumentPicker";
+import styles from '../styles';
+import BrowseChapterNavigation from "../components/BrowseChapterNavigation";
+import BrowseVerseNavigation from "../components/BrowseVerseNavigation";
+import DocumentPicker from "../components/DocumentPicker";
 
 const VerseMapping = withStyles(styles)((props) => {
   const {classes} = props;

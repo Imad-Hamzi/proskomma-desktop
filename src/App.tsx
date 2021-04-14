@@ -15,12 +15,12 @@ import Tab from '@material-ui/core/Tab';
 import { UWProskomma } from 'uw-proskomma';
 
 import styles from './styles';
-import Footer from './Footer';
-import DocSets from './DocSets';
-import Browse from './Browse';
-import Search from './Search';
-import VerseMapping from './VerseMapping';
-import PkQuery from './PkQuery';
+import Footer from './components/Footer';
+import DocSets from './tabs/DocSets';
+import Browse from './tabs/Browse';
+import Search from './tabs/Search';
+import VerseMapping from './tabs/VerseMapping';
+import PkQuery from './tabs/PkQuery';
 import icon from '../assets/icons/48x48.ico';
 
 const currentWindow = remote.getCurrentWindow();

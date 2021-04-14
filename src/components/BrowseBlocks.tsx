@@ -2,8 +2,8 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import styles from './styles';
-import { renderVersesItems } from './render_utils';
+import styles from '../styles';
+import { renderVersesItems } from '../render_utils';
 import BrowseModeButton from './BrowseModeButton';
 
 const BrowseBlocks = withStyles(styles)((props) => {

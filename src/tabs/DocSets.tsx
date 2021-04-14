@@ -5,8 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
-import styles from './styles';
-import DocSet from './DocSet';
+import styles from '../styles';
+import DocSet from '../components/DocSet';
 
 const DocSets = withStyles(styles)((props) => {
   const {classes} = props;

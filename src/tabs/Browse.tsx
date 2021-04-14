@@ -3,11 +3,11 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import styles from './styles';
-import BrowseVerse from './BrowseVerse';
-import BrowseChapter from './BrowseChapter';
-import BrowseBlocks from './BrowseBlocks';
-import DocumentPicker from './DocumentPicker';
+import styles from '../styles';
+import BrowseVerse from '../components/BrowseVerse';
+import BrowseChapter from '../components/BrowseChapter';
+import BrowseBlocks from '../components/BrowseBlocks';
+import DocumentPicker from '../components/DocumentPicker';
 
 const Browse = withStyles(styles)((props) => {
   const { classes } = props;

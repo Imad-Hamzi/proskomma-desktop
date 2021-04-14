@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import {withStyles} from '@material-ui/core/styles';
 
-import styles from './styles';
+import styles from '../styles';
 
 const Footer = (props) => {
   const { classes } = props;

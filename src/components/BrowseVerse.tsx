@@ -3,7 +3,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import styles from './styles';
+import styles from '../styles';
 import BrowseVerseNavigation from './BrowseVerseNavigation';
 import BrowseModeButton from './BrowseModeButton';
 
