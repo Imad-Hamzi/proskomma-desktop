@@ -18,22 +18,22 @@ import styles from '../styles';
 
 const simpleSearchQueryTemplate =
   '{' +
-  '  docSet(id:"%docSetId%") {' +
-  '    documents {' +
-  '       id' +
-  '       bookCode: header(id: "bookCode")' +
-  '       title: header(id: "toc2")' +
-  '       mainSequence {' +
-  '         blocks(' +
-  '           withMatchingChars: [%searchTerms%]' +
-  '           allChars:%allChars%' +
-  '         ) {' +
-  '           scopeLabels tokens { payload }' +
-  '         }' +
-  '       }' +
-  '    }' +
-  '    matches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:"%searchTermsRegex%") { matched }' +
-  '  }' +
+  '  docSet(id:"%docSetId%") {\n' +
+  '    documents {\n' +
+  '       id\n' +
+  '       bookCode: header(id: "bookCode")\n' +
+  '       title: header(id: "toc2")\n' +
+  '       mainSequence {\n' +
+  '         blocks(\n' +
+  '           withMatchingChars: [%searchTerms%]\n' +
+  '           allChars:%allChars%\n' +
+  '         ) {\n' +
+  '           scopeLabels tokens { payload }\n' +
+  '         }\n' +
+  '       }\n' +
+  '    }\n' +
+  '    matches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:"%searchTermsRegex%") { matched }\n' +
+  '  }\n' +
   '}';
 
 const Search = withStyles(styles)((props) => {

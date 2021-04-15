@@ -14,22 +14,22 @@ const BrowseChapter = withStyles(styles) (
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
   const chapterQueryTemplate =
-    '{' +
-    '  docSet(id:"%docSetId%") {' +
-    '    document(bookCode: "%bookCode%") {' +
-    '      title: header(id: "toc2")' +
-    '      mainSequence {' +
-    '         blocks(withScriptureCV: "%chapter%") {' +
-    '            bs { payload }' +
-    '            items { type subType payload }' +
-    '         }' +
-    '      }' +
-    '      nav: cvNavigation(chapter:"%chapter%" verse: "1") {' +
-    '        previousChapter' +
-    '        nextChapter' +
-    '      }' +
-    '    }' +
-    '  }' +
+    '{\n' +
+    '  docSet(id:"%docSetId%") {\n' +
+    '    document(bookCode: "%bookCode%") {\n' +
+    '      title: header(id: "toc2")\n' +
+    '      mainSequence {\n' +
+    '         blocks(withScriptureCV: "%chapter%") {\n' +
+    '            bs { payload }\n' +
+    '            items { type subType payload }\n' +
+    '         }\n' +
+    '      }\n' +
+    '      nav: cvNavigation(chapter:"%chapter%" verse: "1") {\n' +
+    '        previousChapter\n' +
+    '        nextChapter\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
     '}';
 
   React.useEffect(() => {
@@ -56,7 +56,7 @@ const BrowseChapter = withStyles(styles) (
   if (result.data && result.data.docSet) {
     const scriptureTitle = `Ch ${props.state.selectedChapter.get}`;
     const scriptureText =
-      'mainSequence' in result.data.docSet.document ?
+      'docSet' in result.data && 'document' in result.data.docSet && 'mainSequence' in result.data.docSet.document ?
         <>
           {[...result.data.docSet.document.mainSequence.blocks.entries()].map(
           b => <Typography key={b[0]} variant="body1" className={classes[`usfm_${b[1].bs.payload.split('/')[1]}`]}>

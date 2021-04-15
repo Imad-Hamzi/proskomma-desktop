@@ -146,7 +146,7 @@ const VerseMapping = withStyles(styles)((props) => {
             }</Typography>
           </Grid>
         </Grid>
-      </div> : ''
+      </div> : `${JSON.stringify(result.data)}`
   );
 });
 

@@ -13,17 +13,17 @@ const BrowseVerse = withStyles(styles)((props) => {
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
   const verseQueryTemplate =
-    '{' +
-    '  docSet(id:"%docSetId%") {' +
-    '    document(bookCode: "%bookCode%") {' +
-    '      title: header(id: "toc2")' +
-    '      cv (chapter:"%chapter%" verses:["%verse%"]) { text }' +
-    '      nav: cvNavigation(chapter:"%chapter%" verse: "%verse%") {' +
-    '        previousVerse { chapter verse }' +
-    '        nextVerse { chapter verse }' +
-    '      }' +
-    '    }' +
-    '  }' +
+    '{\n' +
+    '  docSet(id:"%docSetId%") {\n' +
+    '    document(bookCode: "%bookCode%") {\n' +
+    '      title: header(id: "toc2")\n' +
+    '      cv (chapter:"%chapter%" verses:["%verse%"]) { text }\n' +
+    '      nav: cvNavigation(chapter:"%chapter%" verse: "%verse%") {\n' +
+    '        previousVerse { chapter verse }\n' +
+    '        nextVerse { chapter verse }\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
     '}';
   React.useEffect(() => {
     const doQuery = async () => {
@@ -49,7 +49,7 @@ const BrowseVerse = withStyles(styles)((props) => {
   if (result.data && result.data.docSet && result.data.docSet.document) {
     const scriptureTitle = `${props.state.selectedChapter.get}:${props.state.selectedVerse.get}`;
     const scriptureText =
-      'cv' in result.data.docSet.document ? (
+      'docSet' in result.data && 'document' in result.data.docSet && 'cv' in result.data.docSet.document ? (
         <Typography variant="body1">
           {result.data.docSet.document.cv[0].text}
         </Typography>

@@ -13,13 +13,13 @@ const Browse = withStyles(styles)((props) => {
   const { classes } = props;
   const [result, setResult] = React.useState({});
   const browseQueryTemplate =
-    '{' +
-    '  docSet(id:"%docSetId%") {' +
-    '    selectors { key value }' +
-    '    documents {' +
-    '      id' +
-    '      bookCode: header(id: "bookCode" )' +
-    '      title: header(id: "toc2")' +
+    '{\n' +
+    '  docSet(id:"%docSetId%") {\n' +
+    '    selectors { key value }\n' +
+    '    documents {\n' +
+    '      id\n' +
+    '      bookCode: header(id: "bookCode" )\n' +
+    '      title: header(id: "toc2")\n' +
     '    }' +
     '  }' +
     '}';

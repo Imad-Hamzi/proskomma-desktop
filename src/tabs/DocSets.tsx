@@ -14,12 +14,12 @@ const DocSets = withStyles(styles)((props) => {
   const [result, setResult] = React.useState({});
   const homeQuery =
     '{' +
-    '  processor packageVersion nDocSets nDocuments' +
-    '  docSets {' +
-    '    id hasMapping' +
-    '    documents { id }' +
-    '  }' +
-    '}';
+    '  processor packageVersion nDocSets nDocuments\n' +
+    '  docSets {\n' +
+    '    id hasMapping\n' +
+    '    documents { id }\n' +
+    '  }\n' +
+    '}\n';
   React.useEffect(() => {
     const doQuery = async () => {
       return await props.pk.gqlQuery(homeQuery);

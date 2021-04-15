@@ -12,17 +12,17 @@ const BrowseBlocks = withStyles(styles)((props) => {
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
   const blocksQueryTemplate =
-    '{' +
-    '  docSet(id:"%docSetId%") {' +
-    '    document(bookCode: "%bookCode%") {' +
-    '      title: header(id: "toc2")' +
-    '      mainSequence {' +
-    '        blocks(withScriptureCV:"%chapter%:%verse%") {' +
-    '          items { type subType payload }' +
-    '        }' +
-    '      }' +
-    '    }' +
-    '  }' +
+    '{\n' +
+    '  docSet(id:"%docSetId%") {\n' +
+    '    document(bookCode: "%bookCode%") {\n' +
+    '      title: header(id: "toc2")\n' +
+    '      mainSequence {\n' +
+    '        blocks(withScriptureCV:"%chapter%:%verse%") {\n' +
+    '          items { type subType payload }\n' +
+    '        }\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
     '}';
 
   React.useEffect(() => {
@@ -65,7 +65,7 @@ const BrowseBlocks = withStyles(styles)((props) => {
       </Typography>
     );
     const scriptureText =
-      'mainSequence' in result.data.docSet.document
+      'docSet' in result.data && 'document' in result.data.docSet && 'mainSequence' in result.data.docSet.document
         ? [
             ...result.data.docSet.document.mainSequence.blocks.entries(),
           ].map((b) => (
