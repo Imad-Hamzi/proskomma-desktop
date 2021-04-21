@@ -257,14 +257,14 @@
     "fs-extra": "^9.0.1",
     "history": "^5.0.0",
     "path": "^0.12.7",
-    "proskomma": "^0.4.14",
+    "proskomma": "^0.4.20",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-tabs": "^3.1.2",
     "regenerator-runtime": "^0.13.5",
     "source-map-support": "^0.5.19",
-    "uw-proskomma": "^0.4.6"
+    "uw-proskomma": "^0.4.9"
   },
   "devEngines": {
     "node": ">=10.x",

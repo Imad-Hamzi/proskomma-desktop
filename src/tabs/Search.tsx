@@ -48,23 +48,25 @@ const Search = withStyles(styles)((props) => {
   // Build new query when searchTerms change
   React.useEffect(() => {
     if (props.state.selectedDocSet) {
-      const searchTermsArray = searchTerms.split(/ +/).map((st) => st.trim());
-      setQuery(
-        simpleSearchQueryTemplate
-          .replace(/%docSetId%/g, props.state.selectedDocSet.get)
-          .replace(
-            /%searchTerms%/g,
-            searchTermsArray.map((st) => `"${st}"`).join(', ')
-          )
-          .replace(
-            /%searchTermsRegex%/g,
-            searchTermsArray.map((st) => `(${st})`).join('|')
-          )
-          .replace(
-            /%allChars%/g,
-            allChars ? "true" : "false"
-          )
-      );
+      const searchTermsArray = searchTerms.split(/ +/).map((st) => st.trim()).filter(st => st.length > 0);
+      if (searchTermsArray.length > 0) {
+        setQuery(
+          simpleSearchQueryTemplate
+            .replace(/%docSetId%/g, props.state.selectedDocSet.get)
+            .replace(
+              /%searchTerms%/g,
+              searchTermsArray.map((st) => `"${st}"`).join(', ')
+            )
+            .replace(
+              /%searchTermsRegex%/g,
+              searchTermsArray.map((st) => `(${st})`).join('|')
+            )
+            .replace(
+              /%allChars%/g,
+              allChars ? "true" : "false"
+            )
+        );
+      }
     }
   }, [searchTerms, allChars]);
 
