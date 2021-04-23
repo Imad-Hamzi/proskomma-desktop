@@ -19,7 +19,10 @@ import styles from '../styles';
 const simpleSearchQueryTemplate =
   '{' +
   '  docSet(id:"%docSetId%") {\n' +
-  '    documents {\n' +
+  '    documents(' +
+  '        withMatchingChars: [%searchTerms%]\n' +
+  '        allChars:%allChars%\n' +
+  '      ) {\n' +
   '       id\n' +
   '       bookCode: header(id: "bookCode")\n' +
   '       title: header(id: "toc2")\n' +
@@ -74,6 +77,7 @@ const Search = withStyles(styles)((props) => {
   React.useEffect(() => {
     const doQuery = async () => {
       setFrom(0);
+      const t = Date.now();
       const res = await props.pk.gqlQuery(query);
       setResult(res);
     };
@@ -90,10 +94,10 @@ const Search = withStyles(styles)((props) => {
     setSearchString(ev.target.value);
   };
 
-  const matchRecords = [];
+  let matchRecords = [];
   let count = 0;
   if (result && result.data && result.data.docSet) {
-    const matchableTerms = result.data.docSet.matches.map((m) => m.matched);
+    const matchableTerms = new Set(result.data.docSet.matches.map((m) => m.matched));
     for (const matchingDocument of result.data.docSet.documents.filter(
       (d) => d.mainSequence.blocks.length > 0
     )) {
@@ -123,7 +127,7 @@ const Search = withStyles(styles)((props) => {
               variant="inherit"
               display="inline"
               className={
-                matchableTerms.includes(t[1]) ? classes.boldPara : classes.para
+                matchableTerms.has(t[1]) ? classes.boldPara : classes.para
               }
             >
               {t[1]}

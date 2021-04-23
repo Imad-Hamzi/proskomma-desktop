@@ -9619,7 +9619,7 @@ prop-types@^15.5.0, prop-types@^15.6.2, prop-types@^15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
-proskomma-utils@^0.4.11, proskomma-utils@^0.4.9:
+proskomma-utils@^0.4.11:
   version "0.4.11"
   resolved "https://registry.yarnpkg.com/proskomma-utils/-/proskomma-utils-0.4.11.tgz#e8a01b0df8ab2014dfa94d75856ff13bd5936b7a"
   integrity sha512-mABVW7a73YeBSN8nfsmcw+/fNlXOrN8PzQUheglzN0zoFXm4oOt0wWZ6QqBswgkWNV7r/cmMp/UOgV7ZlXYmbw==
@@ -9634,10 +9634,10 @@ proskomma-utils@^0.4.11, proskomma-utils@^0.4.9:
     uuid-base64 "^1.0.0"
     xregexp "^4.4.1"
 
-proskomma@^0.4.20, proskomma@^0.4.21:
-  version "0.4.21"
-  resolved "https://registry.yarnpkg.com/proskomma/-/proskomma-0.4.21.tgz#7802d6bab2991d3b96fd1ec077dbf8e3364935f9"
-  integrity sha512-IyWJ3hkavzIGhfSh14OlNHhzcrKnjdgGYHpN1jg2l7rndehLErSokIOzms6klveJduqsg4kYScCyFStgXTytIg==
+proskomma@^0.4.20, proskomma@^0.4.22:
+  version "0.4.22"
+  resolved "https://registry.yarnpkg.com/proskomma/-/proskomma-0.4.22.tgz#59e81e40f9a5c3b90731d9424b199bbc04fe23d5"
+  integrity sha512-Nr2H+3QM32tkWDGglQhDSevTn+/IThIK0g/H+tSFHNuMdYnQYS1ELTKifogKWo9Opk98pJIK263rtOL1wLFoXQ==
   dependencies:
     "@babel/core" "^7.12.9"
     async-mutex "^0.2.6"
@@ -11935,15 +11935,15 @@ uuid@^8.3.0, uuid@^8.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
-uw-proskomma@^0.4.9:
-  version "0.4.9"
-  resolved "https://registry.yarnpkg.com/uw-proskomma/-/uw-proskomma-0.4.9.tgz#d805fc6d0429ca644cc95245a92d09b5873b5e80"
-  integrity sha512-EhJwdziK6qQKdlsUIo4dU1YcL2flSMuetdSfzVhCmFLBjp1ywlgz+YRbcfRPGdatm5y91S7Qtr30IKhY3E28jg==
+uw-proskomma@^0.4.10:
+  version "0.4.10"
+  resolved "https://registry.yarnpkg.com/uw-proskomma/-/uw-proskomma-0.4.10.tgz#ed84b8f9842381e05b546e9138f953f6c5831ffc"
+  integrity sha512-8owK9gQ/M2nxcZx2SM6dd0shyh8PO7s1S56yt2JX/o6fW6aTSXSGvL+34bPXDpfXZNZ2MIKIUrVlOMyye/ffYA==
   dependencies:
     d3-dsv "^2.0.0"
     deepcopy "^2.1.0"
     path "^0.12.7"
-    proskomma "^0.4.21"
+    proskomma "^0.4.22"
     xregexp "^4.3.0"
 
 v8-compile-cache@^2.0.3, v8-compile-cache@^2.2.0:
