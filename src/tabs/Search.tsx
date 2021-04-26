@@ -16,7 +16,30 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import InspectQuery from "../components/InspectQuery";
 import styles from '../styles';
 
-const simpleSearchQueryTemplate =
+const exactSearchQueryTemplate =
+  '{' +
+  '  docSet(id:"%docSetId%") {\n' +
+  '    documents(' +
+  '        withChars: [%searchTerms%]\n' +
+  '        allChars:%allChars%\n' +
+  '      ) {\n' +
+  '       id\n' +
+  '       bookCode: header(id: "bookCode")\n' +
+  '       title: header(id: "toc2")\n' +
+  '       mainSequence {\n' +
+  '         blocks(\n' +
+  '           withChars: [%searchTerms%]\n' +
+  '           allChars:%allChars%\n' +
+  '         ) {\n' +
+  '           scopeLabels tokens { payload }\n' +
+  '         }\n' +
+  '       }\n' +
+  '    }\n' +
+  '    matches: enumRegexIndexesForString (enumType:"wordLike" searchRegex:"%searchTermsRegex%") { matched }\n' +
+  '  }\n' +
+  '}';
+
+const regexSearchQueryTemplate =
   '{' +
   '  docSet(id:"%docSetId%") {\n' +
   '    documents(' +
@@ -46,6 +69,7 @@ const Search = withStyles(styles)((props) => {
   const [searchTerms, setSearchTerms] = React.useState('');
   const [searchString, setSearchString] = React.useState('');
   const [allChars, setAllChars] = React.useState(false);
+  const [exactMatch, setExactMatch] = React.useState(true);
   const [from, setFrom] = React.useState(0);
 
   // Build new query when searchTerms change
@@ -53,25 +77,44 @@ const Search = withStyles(styles)((props) => {
     if (props.state.selectedDocSet) {
       const searchTermsArray = searchTerms.split(/ +/).map((st) => st.trim()).filter(st => st.length > 0);
       if (searchTermsArray.length > 0) {
-        setQuery(
-          simpleSearchQueryTemplate
-            .replace(/%docSetId%/g, props.state.selectedDocSet.get)
-            .replace(
-              /%searchTerms%/g,
-              searchTermsArray.map((st) => `"${st}"`).join(', ')
-            )
-            .replace(
-              /%searchTermsRegex%/g,
-              searchTermsArray.map((st) => `(${st})`).join('|')
-            )
-            .replace(
-              /%allChars%/g,
-              allChars ? "true" : "false"
-            )
-        );
+        if (exactMatch) {
+          setQuery(
+            exactSearchQueryTemplate
+              .replace(/%docSetId%/g, props.state.selectedDocSet.get)
+              .replace(
+                /%searchTerms%/g,
+                searchTermsArray.map((st) => `"${st}"`).join(', ')
+              )
+              .replace(
+                /%searchTermsRegex%/g,
+                searchTermsArray.map((st) => `(^${st}$)`).join('|')
+              )
+              .replace(
+                /%allChars%/g,
+                allChars ? "true" : "false"
+              )
+          );
+        } else {
+          setQuery(
+            regexSearchQueryTemplate
+              .replace(/%docSetId%/g, props.state.selectedDocSet.get)
+              .replace(
+                /%searchTerms%/g,
+                searchTermsArray.map((st) => `"${st}"`).join(', ')
+              )
+              .replace(
+                /%searchTermsRegex%/g,
+                searchTermsArray.map((st) => `(${st})`).join('|')
+              )
+              .replace(
+                /%allChars%/g,
+                allChars ? "true" : "false"
+              )
+          );
+        }
       }
     }
-  }, [searchTerms, allChars]);
+  }, [searchTerms, allChars, exactMatch]);
 
   // Run query when query or docSet changes
   React.useEffect(() => {
@@ -79,6 +122,7 @@ const Search = withStyles(styles)((props) => {
       setFrom(0);
       const t = Date.now();
       const res = await props.pk.gqlQuery(query);
+      console.log(`'${searchString}' (${exactMatch ? 'Exact' : 'Regex'}, ${allChars ? 'All' : 'Any'}): ${Date.now() - t} msec`);
       setResult(res);
     };
     if (searchTerms.trim().length > 0) {
@@ -151,11 +195,20 @@ const Search = withStyles(styles)((props) => {
         <FormControlLabel
           control={
             <Switch
+              checked={exactMatch}
+              label="Exact"
+              onChange={(ev) => setExactMatch(ev.target.checked)}
+            />}
+          label="Exact"
+        />
+        <FormControlLabel
+          control={
+            <Switch
               checked={allChars}
               label="All Terms"
               onChange={(ev) => setAllChars(ev.target.checked)}
             />}
-          label="Require All Terms"
+          label="Require All"
         />
         <InspectQuery
           state={props.state}

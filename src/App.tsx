@@ -19,6 +19,7 @@ import Footer from './components/Footer';
 import DocSets from './tabs/DocSets';
 import Browse from './tabs/Browse';
 import Search from './tabs/Search';
+import EditBlock from './tabs/EditBlock';
 import VerseMapping from './tabs/VerseMapping';
 import PkQuery from './tabs/PkQuery';
 import icon from '../assets/icons/48x48.ico';
@@ -169,6 +170,7 @@ export default function App() {
             <Tab label="DocSets" />
             <Tab label="Browse" />
             <Tab label="Search" />
+            <Tab label="Edit" />
             <Tab label={"Verse Mapping"} />
             <Tab label="Raw Query" />
           </Tabs>
@@ -179,8 +181,9 @@ export default function App() {
           )}
           {tabN === 1 && <Browse pk={pk} state={state} />}
           {tabN === 2 && <Search pk={pk} state={state} />}
-          {tabN === 3 && <VerseMapping pk={pk} state={state} />}
-          {tabN === 4 && <PkQuery pk={pk} state={state} />}
+          {tabN === 3 && <EditBlock pk={pk} state={state} />}
+          {tabN === 4 && <VerseMapping pk={pk} state={state} />}
+          {tabN === 5 && <PkQuery pk={pk} state={state} />}
         </Container>
         <Footer />
       </div>
