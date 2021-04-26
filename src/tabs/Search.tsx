@@ -122,7 +122,7 @@ const Search = withStyles(styles)((props) => {
       setFrom(0);
       const t = Date.now();
       const res = await props.pk.gqlQuery(query);
-      console.log(`'${searchString}' (${exactMatch ? 'Exact' : 'Regex'}, ${allChars ? 'All' : 'Any'}): ${Date.now() - t} msec`);
+      // console.log(`'${searchString}' (${exactMatch ? 'Exact' : 'Regex'}, ${allChars ? 'All' : 'Any'}): ${Date.now() - t} msec`);
       setResult(res);
     };
     if (searchTerms.trim().length > 0) {
