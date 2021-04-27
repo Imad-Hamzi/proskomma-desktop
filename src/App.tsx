@@ -19,7 +19,7 @@ import Footer from './components/Footer';
 import DocSets from './tabs/DocSets';
 import Browse from './tabs/Browse';
 import Search from './tabs/Search';
-import EditBlock from './tabs/EditBlock';
+import EditBlock from './tabs/Edit';
 import VerseMapping from './tabs/VerseMapping';
 import PkQuery from './tabs/PkQuery';
 import icon from '../assets/icons/48x48.ico';

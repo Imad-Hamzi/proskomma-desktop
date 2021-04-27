@@ -4,12 +4,10 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
 import styles from '../styles';
-import BrowseVerse from '../components/BrowseVerse';
-import BrowseChapter from '../components/BrowseChapter';
-import BrowseBlocks from '../components/BrowseBlocks';
+import EditBlock from '../components/EditBlock';
 import DocumentPicker from '../components/DocumentPicker';
 
-const EditBlock = withStyles(styles)((props) => {
+const Edit = withStyles(styles)((props) => {
   const { classes } = props;
   const [result, setResult] = React.useState({});
   const browseQueryTemplate =
@@ -33,39 +31,10 @@ const EditBlock = withStyles(styles)((props) => {
       setResult(res);
     };
     doQuery();
-  }, [props.state.selectedDocSet.get, props.state.selectedDocument.get]);
+  }, [props.state.selectedDocSet.get, props.state.selectedDocument.get, props.state.selectedBook.get]);
   const selectorByName = (selectors, selectorName) =>
     selectors.filter((s) => s.key === selectorName)[0].value;
   const ds = !result.data || !result.data.docSet ? {} : result.data.docSet;
-  let browseView;
-  switch (props.state.renderMode.get) {
-    case 'verse':
-      browseView = (
-        <BrowseVerse
-          pk={props.pk}
-          state={props.state}
-        />
-      );
-      break;
-    case 'chapter':
-      browseView = (
-        <BrowseChapter
-          pk={props.pk}
-          state={props.state}
-        />
-      );
-      break;
-    case 'blocks':
-      browseView = (
-        <BrowseBlocks
-          pk={props.pk}
-          state={props.state}
-        />
-      );
-      break;
-    default:
-      throw new Error(`Unknown renderMode '${props.state.renderMode}'`);
-  }
   return (
     <div className={classes.tabContent}>
       {!props.state.selectedDocSet.get || !ds || !ds.selectors ? (
@@ -81,9 +50,12 @@ const EditBlock = withStyles(styles)((props) => {
           <DocumentPicker docSet={ds} state={props.state} />
         </div>
       )}
-      {browseView}
+      <EditBlock
+        pk={props.pk}
+        state={props.state}
+      />
     </div>
   );
 });
 
-export default EditBlock;
+export default Edit;

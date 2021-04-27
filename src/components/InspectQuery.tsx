@@ -15,7 +15,7 @@ const InspectQuery = withStyles(styles) (
         size="small"
         onClick={() => {
           props.state.savedQueries.set([props.query, ...props.state.savedQueries.get]);
-          props.state.tabN.set(4);
+          props.state.tabN.set(5);
         }}
       >
         Inspect Query
