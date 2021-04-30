@@ -12,6 +12,62 @@ import InspectQuery from './InspectQuery';
 import styles from '../styles';
 import { renderVersesItems } from '../render_utils';
 
+const items2slate = items => {
+  const ret = [];
+  let tokenPayloads = [];
+  const maybePushTokens = () => {
+    if (tokenPayloads.length > 0) {
+      ret.push({
+        type: 'tokens',
+        text: tokenPayloads
+        .join('')
+          .replace(/\s+/g, ' ')
+      });
+      tokenPayloads = [];
+    }
+  }
+
+  for (const item of items) {
+    switch (item.type) {
+      case 'token':
+        tokenPayloads.push(item.payload);
+        break;
+      case 'scope':
+        maybePushTokens();
+        const scopeBits = item.payload.split('/');
+        if (item.subType === 'start') {
+          if (['chapter', 'verses'].includes(scopeBits[0])) {
+            ret.push({
+              type: scopeBits[0],
+              elementText: scopeBits[1],
+              children: [
+                {
+                  type: 'tokens',
+                  text: '',
+                },
+              ],
+            });
+          } else {   // end
+          }
+        }
+        break;
+      case 'graft':
+        break;
+        maybePushTokens();
+        ret.push([indent, 'graft', item.subType, item.payload]);
+        break;
+      default:
+        break;
+    }
+  }
+  maybePushTokens();
+  return [
+    {type: 'tokens', text: ''},
+    {type: 'block', children: [{type: 'tokens', text: ''}, ...ret, {type: 'tokens', text: ''}]},
+    {type: 'tokens', text: ''},
+  ];
+};
+
 const EditBlock = withStyles(styles)((props) => {
   const { classes } = props;
   const [result, setResult] = React.useState({});
@@ -19,6 +75,8 @@ const EditBlock = withStyles(styles)((props) => {
   const [blockNo, setBlockNo] = React.useState(0);
   const [nBlocks, setNBlocks] = React.useState(0);
   const [blockContent, setBlockContent] = React.useState('');
+  const [editorContent, setEditorContent] = React.useState([]);
+/*
   const [editorContent, setEditorContent] = React.useState([
     {
       type: 'block',
@@ -80,6 +138,7 @@ const EditBlock = withStyles(styles)((props) => {
       ],
     },
   ]);
+ */
   const [displayMode, setDisplayMode] = React.useState('read');
   const [changeNo, setChangeNo] = React.useState(0);
   const [mainSequenceId, setMainSequenceId] = React.useState('');
@@ -91,7 +150,7 @@ const EditBlock = withStyles(styles)((props) => {
     '      mainSequence {\n' +
     '        id' +
     '        nBlocks' +
-    '        blocks(positions: [%blockNo%]) { aghast }\n' +
+    '        blocks(positions: [%blockNo%]) { aghast items { type subType payload } }\n' +
     '      }\n' +
     '    }\n' +
     '  }\n' +
@@ -176,12 +235,6 @@ const EditBlock = withStyles(styles)((props) => {
   slateEditor.isVoid = (element) =>
     ['chapter', 'verses'].includes(element.type);
 
-  const handleTextChange = (ev) => {
-    if (ev) {
-      setBlockContent(ev.target.value);
-    }
-  };
-
   const handleDisplayChange = async (ev) => {
     if (ev) {
       if (displayMode === 'read') {
@@ -214,6 +267,7 @@ const EditBlock = withStyles(styles)((props) => {
         const res = await props.pk.gqlQuery(editQuery);
         setResult(res);
         setBlockContent(res.data.docSet.document.mainSequence.blocks[0].aghast);
+        setEditorContent(items2slate(res.data.docSet.document.mainSequence.blocks[0].items));
         setNBlocks(res.data.docSet.document.mainSequence.nBlocks);
         setMainSequenceId(res.data.docSet.document.mainSequence.id);
       }
@@ -252,17 +306,6 @@ const EditBlock = withStyles(styles)((props) => {
     );
     const content =
       displayMode === 'write' ? (
-        /*
-        <TextareaAutosize
-          className={classes.pkQueryTextarea}
-          rowsMin="5"
-          rowsMax="25"
-          display="block"
-          onChange={async (event) => handleTextChange(event)}
-          onDoubleClick={handleDisplayChange}
-          value={blockContent}
-        />
-       */
         <Slate
           editor={slateEditor}
           value={editorContent}
