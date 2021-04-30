@@ -1,26 +1,27 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import { createEditor } from 'slate';
-import { Editable, Slate, withReact } from 'slate-react';
+import {createEditor} from 'slate';
+import {Editable, Slate, withReact} from 'slate-react';
 
-import { aghast2items, string2aghast } from 'proskomma-utils';
+import {aghast2items, string2aghast} from 'proskomma-utils';
 import InspectQuery from './InspectQuery';
 import styles from '../styles';
-import { renderVersesItems } from '../render_utils';
+import {renderVersesItems} from '../render_utils';
 
 const items2slate = items => {
-  const ret = [];
+  const ret = [[]];
+  const charTags = [];
   let tokenPayloads = [];
   const maybePushTokens = () => {
     if (tokenPayloads.length > 0) {
-      ret.push({
+      ret[0].push({
         type: 'tokens',
         text: tokenPayloads
-        .join('')
+          .join('')
           .replace(/\s+/g, ' ')
       });
       tokenPayloads = [];
@@ -37,7 +38,7 @@ const items2slate = items => {
         const scopeBits = item.payload.split('/');
         if (item.subType === 'start') {
           if (['chapter', 'verses'].includes(scopeBits[0])) {
-            ret.push({
+            ret[0].push({
               type: scopeBits[0],
               elementText: scopeBits[1],
               children: [
@@ -47,98 +48,129 @@ const items2slate = items => {
                 },
               ],
             });
-          } else {   // end
+          } else if (scopeBits[0] === 'span') {
+            ret.unshift([]);
+            charTags.push(scopeBits[1]);
+          }
+        } else { // end
+          if (scopeBits[0] === 'span') {
+            const topStack = ret.shift();
+            const topTag = charTags.shift();
+            ret[0].push(
+              {
+                type: 'tokens',
+                text: '',
+              },
+              {
+                type: `charTag/${topTag}`,
+                children: [
+                  {
+                    type: 'tokens',
+                    text: '',
+                  },
+                  ...topStack,
+                  {
+                    type: 'tokens',
+                    text: '',
+                  },
+                ],
+              },
+              {
+                type: 'tokens',
+                text: '',
+              },
+            );
           }
         }
-        break;
-      case 'graft':
-        break;
-        maybePushTokens();
-        ret.push([indent, 'graft', item.subType, item.payload]);
         break;
       default:
         break;
     }
   }
   maybePushTokens();
+  console.log(JSON.stringify(ret[0], null, 2));
   return [
-    {type: 'tokens', text: ''},
-    {type: 'block', children: [{type: 'tokens', text: ''}, ...ret, {type: 'tokens', text: ''}]},
-    {type: 'tokens', text: ''},
+    {
+      type: 'block', children: [
+        {type: 'tokens', text: ''},
+        ...ret[0],
+        {type: 'tokens', text: ''}
+      ]
+    },
   ];
 };
 
 const EditBlock = withStyles(styles)((props) => {
-  const { classes } = props;
+  const {classes} = props;
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
-  const [blockNo, setBlockNo] = React.useState(0);
+  const [blockNo, setBlockNo] = React.useState(45);
   const [nBlocks, setNBlocks] = React.useState(0);
   const [blockContent, setBlockContent] = React.useState('');
   const [editorContent, setEditorContent] = React.useState([]);
-/*
-  const [editorContent, setEditorContent] = React.useState([
-    {
-      type: 'block',
-      children: [
-        {
-          type: 'tokens',
-          text: '',
-        },
-        {
-          type: 'chapter',
-          elementText: '45',
-          children: [
-            {
-              type: 'tokens',
-              text: '',
-            },
-          ],
-        },
-        {
-          type: 'tokens',
-          text: '',
-        },
-        {
-          type: 'verses',
-          elementText: '23',
-          children: [
-            {
-              type: 'tokens',
-              text: '',
-            },
-          ],
-        },
-        {
-          type: 'tokens',
-          text: 'Here is ',
-        },
-        {
-          type: 'charTag/b',
-          children: [
-            { type: 'tokens', text: 'some ' },
-            {
-              type: 'charTag/i',
-              children: [{ type: 'tokens', text: 'text' }],
-            },
-          ],
-        },
-        {
-          type: 'tokens',
-          text: ' and here is some ',
-        },
-        {
-          type: 'charTag/i',
-          children: [{ type: 'tokens', text: 'more' }],
-        },
-        {
-          type: 'tokens',
-          text: ' text',
-        },
-      ],
-    },
-  ]);
- */
+  /*
+    const [editorContent, setEditorContent] = React.useState([
+      {
+        type: 'block',
+        children: [
+          {
+            type: 'tokens',
+            text: '',
+          },
+          {
+            type: 'chapter',
+            elementText: '45',
+            children: [
+              {
+                type: 'tokens',
+                text: '',
+              },
+            ],
+          },
+          {
+            type: 'tokens',
+            text: '',
+          },
+          {
+            type: 'verses',
+            elementText: '23',
+            children: [
+              {
+                type: 'tokens',
+                text: '',
+              },
+            ],
+          },
+          {
+            type: 'tokens',
+            text: 'Here is ',
+          },
+          {
+            type: 'charTag/b',
+            children: [
+              { type: 'tokens', text: 'some ' },
+              {
+                type: 'charTag/i',
+                children: [{ type: 'tokens', text: 'text' }],
+              },
+            ],
+          },
+          {
+            type: 'tokens',
+            text: ' and here is some ',
+          },
+          {
+            type: 'charTag/i',
+            children: [{ type: 'tokens', text: 'more' }],
+          },
+          {
+            type: 'tokens',
+            text: ' text',
+          },
+        ],
+      },
+    ]);
+   */
   const [displayMode, setDisplayMode] = React.useState('read');
   const [changeNo, setChangeNo] = React.useState(0);
   const [mainSequenceId, setMainSequenceId] = React.useState('');
@@ -172,6 +204,16 @@ const EditBlock = withStyles(styles)((props) => {
     return (
       <span {...props.attributes} className={classes.charTagIElement}>
         <span className={classes.editorStartMarkup}>i&lt;</span>
+        {props.children}
+        <span className={classes.editorEndMarkup}>&gt;</span>
+      </span>
+    );
+  });
+
+  const CharTagQSElement = withStyles(styles)((props) => {
+    return (
+      <span {...props.attributes} className={classes.charTagQSElement}>
+        <span className={classes.editorStartMarkup}>qs&lt;</span>
         {props.children}
         <span className={classes.editorEndMarkup}>&gt;</span>
       </span>
@@ -214,6 +256,8 @@ const EditBlock = withStyles(styles)((props) => {
         return <CharTagBElement {...props} />;
       case 'charTag/i':
         return <CharTagIElement {...props} />;
+      case 'charTag/qs':
+        return <CharTagQSElement {...props} />;
       case 'chapter':
         return <ChapterElement {...props} />;
       case 'verses':
@@ -226,7 +270,7 @@ const EditBlock = withStyles(styles)((props) => {
       case 'tokens':
         return <TokensLeaf {...props} />;
       default:
-        return `??? ${props.leaf.text} ???`;
+        return `??? ${props.leaf.type} ${props.leaf.text} ???`;
     }
   }, []);
 
@@ -286,7 +330,7 @@ const EditBlock = withStyles(styles)((props) => {
           disabled={blockNo === 0}
           onClick={() => setBlockNo(blockNo - 1)}
         >
-          <ArrowBackIcon />
+          <ArrowBackIcon/>
         </IconButton>
         <Typography
           variant="body1"
@@ -294,13 +338,13 @@ const EditBlock = withStyles(styles)((props) => {
           className={classes.browseNavigationText}
         >
           {`Paragraph ${blockNo + 1} of ${nBlocks}`}
-          <InspectQuery state={props.state} query={query} />
+          <InspectQuery state={props.state} query={query}/>
         </Typography>
         <IconButton
           disabled={blockNo == nBlocks - 1}
           onClick={() => setBlockNo(blockNo + 1)}
         >
-          <ArrowForwardIcon />
+          <ArrowForwardIcon/>
         </IconButton>
       </div>
     );
@@ -310,11 +354,11 @@ const EditBlock = withStyles(styles)((props) => {
           editor={slateEditor}
           value={editorContent}
           onChange={(newValue) => {
-            console.log(newValue);
+            console.log(JSON.stringify(newValue, null, 2));
             setEditorContent(newValue);
           }}
         >
-          <Editable renderElement={renderElement} renderLeaf={renderLeaf} />
+          <Editable renderElement={renderElement} renderLeaf={renderLeaf}/>
         </Slate>
       ) : (
         <Typography
