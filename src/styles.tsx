@@ -139,7 +139,24 @@ const styles = (theme) => ({
   inspectQuery: {
     float: "right",
     marginLeft: "10px",
-  }
+  },
+  chapterElement: {
+    backgroundColor: "#EEE",
+    fontSize: "larger",
+    paddingRight: "0.25em",
+  },
+  versesElement: {
+    backgroundColor: "#EEE",
+    fontSize: "smaller",
+    fontWeight: "bold",
+    paddingRight: "0.25em",
+  },
+  charTagBElement: {
+    fontWeight: "bold",
+  },
+  charTagIElement: {
+    fontStyle: "italic",
+  },
 });
 
 export default styles;
