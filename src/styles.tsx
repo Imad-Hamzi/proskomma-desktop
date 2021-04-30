@@ -142,14 +142,17 @@ const styles = (theme) => ({
   },
   chapterElement: {
     backgroundColor: "#EEE",
-    fontSize: "larger",
-    paddingRight: "0.25em",
+    paddingLeft: "0.2em",
+    paddingRight: "0.2em",
+    marginRight: "0.4em",
   },
   versesElement: {
     backgroundColor: "#EEE",
     fontSize: "smaller",
     fontWeight: "bold",
-    paddingRight: "0.25em",
+    paddingLeft: "0.2em",
+    paddingRight: "0.2em",
+    marginRight: "0.4em",
   },
   charTagBElement: {
     fontWeight: "bold",
@@ -157,6 +160,20 @@ const styles = (theme) => ({
   charTagIElement: {
     fontStyle: "italic",
   },
+  editorStartMarkup: {
+    fontSize: 'small',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    color: '#444',
+    paddingRight: '0.1em',
+  },
+  editorEndMarkup: {
+    fontSize: 'small',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    color: '#444',
+    paddingLeft: '0.2em',
+  }
 });
 
 export default styles;
