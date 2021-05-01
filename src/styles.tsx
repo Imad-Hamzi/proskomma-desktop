@@ -179,7 +179,12 @@ const styles = (theme) => ({
     fontStyle: 'normal',
     color: '#444',
     paddingLeft: '0.2em',
-  }
+  },
+  cancelBlockEditButton: {
+  },
+  submitBlockEditButton: {
+    float: "right",
+  },
 });
 
 export default styles;

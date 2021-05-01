@@ -8,6 +8,7 @@ import { createEditor } from 'slate';
 import { Editable, Slate, withReact } from 'slate-react';
 import InspectQuery from './InspectQuery';
 import styles from '../styles';
+import Button from "@material-ui/core/Button";
 
 const items2slate = (items) => {
   const ret = [[]];
@@ -102,6 +103,7 @@ const EditBlock = withStyles(styles)((props) => {
   const [query, setQuery] = React.useState('');
   const [blockNo, setBlockNo] = React.useState(45);
   const [nBlocks, setNBlocks] = React.useState(0);
+  const [editsUnsaved, setEditsUnsaved] = React.useState(false);
   const [editorContent, setEditorContent] = React.useState([
     {
       type: 'block',
@@ -118,7 +120,7 @@ const EditBlock = withStyles(styles)((props) => {
     '      mainSequence {\n' +
     '        id' +
     '        nBlocks' +
-    '        blocks(positions: [%blockNo%]) { aghast items { type subType payload } }\n' +
+    '        blocks(positions: [%blockNo%]) { items { type subType payload } }\n' +
     '      }\n' +
     '    }\n' +
     '  }\n' +
@@ -249,12 +251,41 @@ const EditBlock = withStyles(styles)((props) => {
           editor={slateEditor}
           value={editorContent}
           onChange={(newValue) => {
+            setEditsUnsaved(true);
             console.log(JSON.stringify(newValue, null, 2));
             setEditorContent(newValue);
           }}
         >
           <Editable renderElement={renderElement} renderLeaf={renderLeaf} />
         </Slate>
+        <div>
+          <Button
+            className={classes.cancelBlockEditButton}
+            disabled={!editsUnsaved}
+            variant="outlined"
+            size="small"
+            onClick={() => {
+              setEditorContent(
+                items2slate(result.data.docSet.document.mainSequence.blocks[0].items)
+              );
+              setEditsUnsaved(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            className={classes.submitBlockEditButton}
+            disabled={!editsUnsaved}
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => {
+              console.log('Submit');
+            }}
+          >
+            Submit
+          </Button>
+        </div>
       </>
     );
   }
