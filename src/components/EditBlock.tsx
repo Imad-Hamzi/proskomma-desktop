@@ -136,13 +136,6 @@ const slate2items = slate => {
       payload: `chapter/${ch}`
     });
   }
-  const closeChapter = (ret, ch) => {
-    ret.push({
-      type: 'scope',
-      subType: 'end',
-      payload: `chapter/${ch}`
-    });
-  }
   const openVerseRange = (ret, vr) => {
     numbersFromVerseRange(vr).forEach(
       v => ret.push({
@@ -356,6 +349,22 @@ const EditBlock = withStyles(styles)((props) => {
     blockNo,
     changeNo,
   ]);
+
+  const submitBlock = async () => {
+    const items = slate2items(editorContent);
+    // console.log(JSON.stringify(items, null, 2));
+    const object2Query = obs => '[' + obs.map(ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${ob.payload}"}`).join(', ') + ']';
+    let query = `mutation { updateItems(` +
+      `docSetId: "${props.state.selectedDocSet.get}"` +
+      ` documentId: "${props.state.selectedDocument.get}"` +
+      ` sequenceId: "${mainSequenceId}"` +
+      ` blockPosition: ${blockNo}` +
+      ` items: ${object2Query(items)}) }`;
+    const res = await props.pk.gqlQuery(query);
+    console.log(res);
+    setChangeNo(changeNo + 1);
+  }
+
   if (result.data && result.data.docSet && editorContent.length > 0) {
     const title = (
       <div>
@@ -416,9 +425,7 @@ const EditBlock = withStyles(styles)((props) => {
             variant="contained"
             color="primary"
             size="small"
-            onClick={() => {
-              console.log(slate2items(editorContent));
-            }}
+            onClick={submitBlock}
           >
             Submit
           </Button>
