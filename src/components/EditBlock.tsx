@@ -1,29 +1,27 @@
 import React from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import {createEditor} from 'slate';
-import {Editable, Slate, withReact} from 'slate-react';
+import { createEditor } from 'slate';
+import { Editable, Slate, withReact } from 'slate-react';
 import InspectQuery from './InspectQuery';
 import styles from '../styles';
 
-const items2slate = items => {
+const items2slate = (items) => {
   const ret = [[]];
-  const charTags = [];
+  const spans = [];
   let tokenPayloads = [];
   const maybePushTokens = () => {
     if (tokenPayloads.length > 0) {
       ret[0].push({
         type: 'tokens',
-        text: tokenPayloads
-          .join('')
-          .replace(/\s+/g, ' ')
+        text: tokenPayloads.join('').replace(/\s+/g, ' '),
       });
       tokenPayloads = [];
     }
-  }
+  };
 
   for (const item of items) {
     switch (item.type) {
@@ -46,18 +44,19 @@ const items2slate = items => {
             });
           } else if (scopeBits[0] === 'span') {
             ret.unshift([]);
-            charTags.push(scopeBits[1]);
+            spans.push(scopeBits[1]);
           }
-        } else { // end
+        } else {
+          // end
           if (scopeBits[0] === 'span') {
             const topStack = ret.shift();
-            const topTag = charTags.shift();
+            const topTag = spans.shift();
             ret[0].push(
               {
                 text: '',
               },
               {
-                type: `charTag/${topTag}`,
+                type: `span/${topTag}`,
                 children: [
                   {
                     text: '',
@@ -70,7 +69,7 @@ const items2slate = items => {
               },
               {
                 text: '',
-              },
+              }
             );
           }
         }
@@ -98,15 +97,17 @@ const items2slate = items => {
 };
 
 const EditBlock = withStyles(styles)((props) => {
-  const {classes} = props;
+  const { classes } = props;
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
   const [blockNo, setBlockNo] = React.useState(45);
   const [nBlocks, setNBlocks] = React.useState(0);
-  const [editorContent, setEditorContent] = React.useState([{
-    type: 'block',
-    children: [{text: 'Loading...'}],
-  }]);
+  const [editorContent, setEditorContent] = React.useState([
+    {
+      type: 'block',
+      children: [{ text: 'Loading...' }],
+    },
+  ]);
   const [changeNo, setChangeNo] = React.useState(0);
   const [mainSequenceId, setMainSequenceId] = React.useState('');
   const blocksQueryTemplate =
@@ -123,34 +124,18 @@ const EditBlock = withStyles(styles)((props) => {
     '  }\n' +
     '}';
 
-  const CharTagBElement = withStyles(styles)((props) => {
+  const SpanElement = withStyles(styles)((props) => {
+    const tag = props.element.type.split('/')[1];
     return (
-      <span {...props.attributes} className={classes.charTagBElement}>
+      <span
+        {...props.attributes}
+        className={classes[`span${tag.toUpperCase()}Element`]}
+      >
         <>
-          <span className={classes.editorStartMarkup}>b&lt;</span>
+          <span className={classes.editorStartMarkup}>{`${tag}<`}</span>
           {props.children}
-          <span className={classes.editorEndMarkup}>&gt;</span>
+          <span className={classes.editorEndMarkup}>{`>`}</span>
         </>
-      </span>
-    );
-  });
-
-  const CharTagIElement = withStyles(styles)((props) => {
-    return (
-      <span {...props.attributes} className={classes.charTagIElement}>
-        <span className={classes.editorStartMarkup}>i&lt;</span>
-        {props.children}
-        <span className={classes.editorEndMarkup}>&gt;</span>
-      </span>
-    );
-  });
-
-  const CharTagQSElement = withStyles(styles)((props) => {
-    return (
-      <span {...props.attributes} className={classes.charTagQSElement}>
-        <span className={classes.editorStartMarkup}>qs&lt;</span>
-        {props.children}
-        <span className={classes.editorEndMarkup}>&gt;</span>
       </span>
     );
   });
@@ -184,23 +169,24 @@ const EditBlock = withStyles(styles)((props) => {
   });
 
   const renderElement = React.useCallback((props) => {
-    switch (props.element.type) {
-      case 'block':
-        return <p {...props.attributes}>{props.children}</p>;
-      case 'charTag/b':
-        return <CharTagBElement {...props} />;
-      case 'charTag/i':
-        return <CharTagIElement {...props} />;
-      case 'charTag/qs':
-        return <CharTagQSElement {...props} />;
-      case 'chapter':
-        return <ChapterElement {...props} />;
-      case 'verses':
-        return <VersesElement {...props} />;
+    if (props.element.type === 'block') {
+      return <p {...props.attributes}>{props.children}</p>;
+    }
+    if (props.element.type.startsWith('span')) {
+      return <SpanElement {...props} />;
+    }
+    if (props.element.type === 'chapter') {
+      return <ChapterElement {...props} />;
+    }
+    if (props.element.type === 'verses') {
+      return <VersesElement {...props} />;
     }
   }, []);
 
-  const renderLeaf = React.useCallback((props) => <TokensLeaf {...props} />, []);
+  const renderLeaf = React.useCallback(
+    (props) => <TokensLeaf {...props} />,
+    []
+  );
 
   const slateEditor = React.useMemo(() => withReact(createEditor()), []);
   slateEditor.isInline = (element) => element.type !== 'block';
@@ -217,7 +203,9 @@ const EditBlock = withStyles(styles)((props) => {
         setQuery(editQuery);
         const res = await props.pk.gqlQuery(editQuery);
         setResult(res);
-        setEditorContent(items2slate(res.data.docSet.document.mainSequence.blocks[0].items));
+        setEditorContent(
+          items2slate(res.data.docSet.document.mainSequence.blocks[0].items)
+        );
         setNBlocks(res.data.docSet.document.mainSequence.nBlocks);
         setMainSequenceId(res.data.docSet.document.mainSequence.id);
       }
@@ -236,7 +224,7 @@ const EditBlock = withStyles(styles)((props) => {
           disabled={blockNo === 0}
           onClick={() => setBlockNo(blockNo - 1)}
         >
-          <ArrowBackIcon/>
+          <ArrowBackIcon />
         </IconButton>
         <Typography
           variant="body1"
@@ -244,13 +232,13 @@ const EditBlock = withStyles(styles)((props) => {
           className={classes.browseNavigationText}
         >
           {`Paragraph ${blockNo + 1} of ${nBlocks}`}
-          <InspectQuery state={props.state} query={query}/>
+          <InspectQuery state={props.state} query={query} />
         </Typography>
         <IconButton
           disabled={blockNo == nBlocks - 1}
           onClick={() => setBlockNo(blockNo + 1)}
         >
-          <ArrowForwardIcon/>
+          <ArrowForwardIcon />
         </IconButton>
       </div>
     );
@@ -265,16 +253,12 @@ const EditBlock = withStyles(styles)((props) => {
             setEditorContent(newValue);
           }}
         >
-          <Editable
-            renderElement={renderElement}
-            renderLeaf={renderLeaf}
-          />
+          <Editable renderElement={renderElement} renderLeaf={renderLeaf} />
         </Slate>
       </>
     );
-  } else {
-    return <Typography variant="body1">No docSet selected</Typography>;
   }
+  return <Typography variant="body1">No docSet selected</Typography>;
 });
 
 export default EditBlock;

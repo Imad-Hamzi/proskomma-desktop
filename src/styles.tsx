@@ -154,11 +154,17 @@ const styles = (theme) => ({
     paddingRight: "0.2em",
     marginRight: "0.4em",
   },
-  charTagBElement: {
+  spanBElement: {
     fontWeight: "bold",
   },
-  charTagIElement: {
+  spanIElement: {
     fontStyle: "italic",
+  },
+  spanQSElement: {
+    fontStyle: "italic",
+  },
+  spanWJElement: {
+    color: "#B00",
   },
   editorStartMarkup: {
     fontSize: 'small',
