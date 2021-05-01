@@ -45,7 +45,7 @@ const items2slate = (items) => {
             });
           } else if (scopeBits[0] === 'span') {
             ret.unshift([]);
-            spans.push(scopeBits[1]);
+            spans.unshift(scopeBits[1]);
           }
         } else {
           // end
@@ -113,7 +113,7 @@ const EditBlock = withStyles(styles)((props) => {
   const { classes } = props;
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
-  const [blockNo, setBlockNo] = React.useState(45);
+  const [blockNo, setBlockNo] = React.useState(0);
   const [nBlocks, setNBlocks] = React.useState(0);
   const [editsUnsaved, setEditsUnsaved] = React.useState(false);
   const [editorContent, setEditorContent] = React.useState([
