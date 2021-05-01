@@ -1,16 +1,18 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import { createEditor } from 'slate';
-import { Editable, Slate, withReact } from 'slate-react';
+import {createEditor} from 'slate';
+import {Editable, Slate, withReact} from 'slate-react';
 import InspectQuery from './InspectQuery';
 import styles from '../styles';
 import Button from "@material-ui/core/Button";
 
-const items2slate = (items) => {
+const xre = require('xregexp');
+
+const items2slate = (items) => {  // Ignoring grafts, spanWithAtts, milestones and attributes
   const ret = [[]];
   const spans = [];
   let tokenPayloads = [];
@@ -81,8 +83,8 @@ const items2slate = (items) => {
                   {
                     text: '',
                   },
-                ]
-              },
+                ],
+              }
             );
           }
         }
@@ -92,7 +94,6 @@ const items2slate = (items) => {
     }
   }
   maybePushTokens();
-  console.log(JSON.stringify(ret[0], null, 2));
   return [
     {
       type: 'block',
@@ -109,8 +110,132 @@ const items2slate = (items) => {
   ];
 };
 
+const slate2items = slate => {
+  const ret = [];
+  let verses = null;
+  let chapter = null;
+  const printableRegexes = [ // Missing some obscure options!
+    ['wordLike', xre('([\\p{Letter}\\p{Number}\\p{Mark}\\u2060]{1,127})')],
+    ['lineSpace', xre('([\\p{Separator}]{1,127})')],
+    ['punctuation', xre('([\\p{Punctuation}+®])')],
+  ];
+  const allPrintableRegexes = xre.union(printableRegexes.map(rr => rr[1]));
+  const isEmptyString = (ob) => ob.text && ob.text === '';
+  const numbersFromVerseRange = vr => {
+    if (vr.includes('-')) {
+      const [fromV, toV] = vr.split('-').map(v => parseInt(v));
+      return Array.from(Array((toV - fromV) + 1).keys()).map(v => v + fromV);
+    } else {
+      return [parseInt(vr)];
+    }
+  }
+  const openChapter = (ret, ch) => {
+    ret.push({
+      type: 'scope',
+      subType: 'start',
+      payload: `chapter/${ch}`
+    });
+  }
+  const closeChapter = (ret, ch) => {
+    ret.push({
+      type: 'scope',
+      subType: 'end',
+      payload: `chapter/${ch}`
+    });
+  }
+  const openVerseRange = (ret, vr) => {
+    numbersFromVerseRange(vr).forEach(
+      v => ret.push({
+        type: 'scope',
+        subType: 'start',
+        payload: `verse/${v}`
+      }),
+    );
+    ret.push({
+      type: 'scope',
+      subType: 'start',
+      payload: `verses/${vr}`
+    });
+  }
+  const closeVerseRange = (ret, vr) => {
+    ret.push({
+      type: 'scope',
+      subType: 'end',
+      payload: `verses/${vr}`
+    });
+    numbersFromVerseRange(vr).reverse().forEach(
+      v => ret.push({
+        type: 'scope',
+        subType: 'end',
+        payload: `verse/${v}`
+      }),
+    );
+  }
+  const processTokens = child => {
+    xre.forEach(
+      child.text,
+      allPrintableRegexes,
+      tText => {
+        for (const [tType, tRegex] of printableRegexes) {
+          if (xre.match(tText, tRegex, 0, true)) {
+            ret.push({
+              type: 'token',
+              subType: tType,
+              payload: tText[0],
+            });
+            break;
+          }
+        }
+      }
+    );
+  }
+  const processChapter = child => { // To do this properly we need to look at open scopes
+      openChapter(ret, child.elementText);
+      chapter = child.elementText;
+  }
+  const processVerses = child => {
+    if (verses) {
+      closeVerseRange(ret, verses)
+    }
+    verses = child.elementText;
+    openVerseRange(ret, verses);
+  }
+  const processSpan = child => {
+    ret.push(
+      {
+        type: "scope",
+        subType: "start",
+        payload: child.type,
+      }
+    );
+    slate2items1(child.children.filter(c => !isEmptyString(c)));
+    ret.push(
+      {
+        type: "scope",
+        subType: "end",
+        payload: child.type,
+      }
+    );
+  }
+  const slate2items1 = children => {
+    for (const child of children) {
+      if ('text' in child) {
+        processTokens(child);
+      } else if (child.type === 'chapter') {
+        processChapter(child);
+      } else if (child.type === 'verses') {
+        processVerses(child);
+      } else if (child.type.startsWith('span/')) {
+        processSpan(child);
+      }
+    }
+  }
+  slate2items1(slate.[0].children.filter(c => !isEmptyString(c)));
+  return ret;
+}
+
 const EditBlock = withStyles(styles)((props) => {
-  const { classes } = props;
+  const {classes} = props;
   const [result, setResult] = React.useState({});
   const [query, setQuery] = React.useState('');
   const [blockNo, setBlockNo] = React.useState(0);
@@ -119,7 +244,7 @@ const EditBlock = withStyles(styles)((props) => {
   const [editorContent, setEditorContent] = React.useState([
     {
       type: 'block',
-      children: [{ text: 'Loading...' }],
+      children: [{text: 'Loading...'}],
     },
   ]);
   const [changeNo, setChangeNo] = React.useState(0);
@@ -183,7 +308,8 @@ const EditBlock = withStyles(styles)((props) => {
       return <p {...props.attributes}>{props.children}</p>;
     }
     if (props.element.type === 'markup') {
-      return <span {...props.attributes}className={classes.editorMarkup}>{props.element.elementText}{props.children}</span>;
+      return <span {...props.attributes}
+                   className={classes.editorMarkup}>{props.element.elementText}{props.children}</span>;
     }
     if (props.element.type.startsWith('span')) {
       return <SpanElement {...props} />;
@@ -237,7 +363,7 @@ const EditBlock = withStyles(styles)((props) => {
           disabled={blockNo === 0}
           onClick={() => setBlockNo(blockNo - 1)}
         >
-          <ArrowBackIcon />
+          <ArrowBackIcon/>
         </IconButton>
         <Typography
           variant="body1"
@@ -245,13 +371,13 @@ const EditBlock = withStyles(styles)((props) => {
           className={classes.browseNavigationText}
         >
           {`Paragraph ${blockNo + 1} of ${nBlocks}`}
-          <InspectQuery state={props.state} query={query} />
+          <InspectQuery state={props.state} query={query}/>
         </Typography>
         <IconButton
           disabled={blockNo == nBlocks - 1}
           onClick={() => setBlockNo(blockNo + 1)}
         >
-          <ArrowForwardIcon />
+          <ArrowForwardIcon/>
         </IconButton>
       </div>
     );
@@ -263,11 +389,11 @@ const EditBlock = withStyles(styles)((props) => {
           value={editorContent}
           onChange={(newValue) => {
             setEditsUnsaved(true);
-            console.log(JSON.stringify(newValue, null, 2));
+            // console.log(JSON.stringify(newValue, null, 2));
             setEditorContent(newValue);
           }}
         >
-          <Editable renderElement={renderElement} renderLeaf={renderLeaf} />
+          <Editable renderElement={renderElement} renderLeaf={renderLeaf}/>
         </Slate>
         <div>
           <Button
@@ -291,7 +417,7 @@ const EditBlock = withStyles(styles)((props) => {
             color="primary"
             size="small"
             onClick={() => {
-              console.log('Submit');
+              console.log(slate2items(editorContent));
             }}
           >
             Submit
