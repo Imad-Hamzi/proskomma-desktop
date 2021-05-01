@@ -6,11 +6,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import {createEditor} from 'slate';
 import {Editable, Slate, withReact} from 'slate-react';
-
-import {aghast2items, string2aghast} from 'proskomma-utils';
 import InspectQuery from './InspectQuery';
 import styles from '../styles';
-import {renderVersesItems} from '../render_utils';
 
 const items2slate = items => {
   const ret = [[]];
@@ -43,7 +40,6 @@ const items2slate = items => {
               elementText: scopeBits[1],
               children: [
                 {
-                  type: 'tokens',
                   text: '',
                 },
               ],
@@ -58,25 +54,21 @@ const items2slate = items => {
             const topTag = charTags.shift();
             ret[0].push(
               {
-                type: 'tokens',
                 text: '',
               },
               {
                 type: `charTag/${topTag}`,
                 children: [
                   {
-                    type: 'tokens',
                     text: '',
                   },
                   ...topStack,
                   {
-                    type: 'tokens',
                     text: '',
                   },
                 ],
               },
               {
-                type: 'tokens',
                 text: '',
               },
             );
@@ -91,11 +83,16 @@ const items2slate = items => {
   console.log(JSON.stringify(ret[0], null, 2));
   return [
     {
-      type: 'block', children: [
-        {type: 'tokens', text: ''},
+      type: 'block',
+      children: [
+        {
+          text: '',
+        },
         ...ret[0],
-        {type: 'tokens', text: ''}
-      ]
+        {
+          text: '',
+        },
+      ],
     },
   ];
 };
@@ -106,72 +103,10 @@ const EditBlock = withStyles(styles)((props) => {
   const [query, setQuery] = React.useState('');
   const [blockNo, setBlockNo] = React.useState(45);
   const [nBlocks, setNBlocks] = React.useState(0);
-  const [blockContent, setBlockContent] = React.useState('');
-  const [editorContent, setEditorContent] = React.useState([]);
-  /*
-    const [editorContent, setEditorContent] = React.useState([
-      {
-        type: 'block',
-        children: [
-          {
-            type: 'tokens',
-            text: '',
-          },
-          {
-            type: 'chapter',
-            elementText: '45',
-            children: [
-              {
-                type: 'tokens',
-                text: '',
-              },
-            ],
-          },
-          {
-            type: 'tokens',
-            text: '',
-          },
-          {
-            type: 'verses',
-            elementText: '23',
-            children: [
-              {
-                type: 'tokens',
-                text: '',
-              },
-            ],
-          },
-          {
-            type: 'tokens',
-            text: 'Here is ',
-          },
-          {
-            type: 'charTag/b',
-            children: [
-              { type: 'tokens', text: 'some ' },
-              {
-                type: 'charTag/i',
-                children: [{ type: 'tokens', text: 'text' }],
-              },
-            ],
-          },
-          {
-            type: 'tokens',
-            text: ' and here is some ',
-          },
-          {
-            type: 'charTag/i',
-            children: [{ type: 'tokens', text: 'more' }],
-          },
-          {
-            type: 'tokens',
-            text: ' text',
-          },
-        ],
-      },
-    ]);
-   */
-  const [displayMode, setDisplayMode] = React.useState('read');
+  const [editorContent, setEditorContent] = React.useState([{
+    type: 'block',
+    children: [{text: 'Loading...'}],
+  }]);
   const [changeNo, setChangeNo] = React.useState(0);
   const [mainSequenceId, setMainSequenceId] = React.useState('');
   const blocksQueryTemplate =
@@ -265,40 +200,12 @@ const EditBlock = withStyles(styles)((props) => {
     }
   }, []);
 
-  const renderLeaf = React.useCallback((props) => {
-    switch (props.leaf.type) {
-      case 'tokens':
-        return <TokensLeaf {...props} />;
-      default:
-        return `??? ${props.leaf.type} ${props.leaf.text} ???`;
-    }
-  }, []);
+  const renderLeaf = React.useCallback((props) => <TokensLeaf {...props} />, []);
 
   const slateEditor = React.useMemo(() => withReact(createEditor()), []);
   slateEditor.isInline = (element) => element.type !== 'block';
   slateEditor.isVoid = (element) =>
     ['chapter', 'verses'].includes(element.type);
-
-  const handleDisplayChange = async (ev) => {
-    if (ev) {
-      if (displayMode === 'read') {
-        setDisplayMode('write');
-      } else {
-        console.log('write changes!');
-        const query =
-          `mutation { updateItems(` +
-          `docSetId: "${props.state.selectedDocSet.get}"` +
-          ` documentId: "${props.state.selectedDocument.get}"` +
-          ` sequenceId: "${mainSequenceId}"` +
-          ` blockPosition: ${blockNo}` +
-          ` aghast: """${blockContent}""") }`;
-        const res = await props.pk.gqlQuery(query);
-        console.log(res);
-        setDisplayMode('read');
-        setChangeNo(changeNo + 1);
-      }
-    }
-  };
 
   React.useEffect(() => {
     const doQuery = async () => {
@@ -310,7 +217,6 @@ const EditBlock = withStyles(styles)((props) => {
         setQuery(editQuery);
         const res = await props.pk.gqlQuery(editQuery);
         setResult(res);
-        setBlockContent(res.data.docSet.document.mainSequence.blocks[0].aghast);
         setEditorContent(items2slate(res.data.docSet.document.mainSequence.blocks[0].items));
         setNBlocks(res.data.docSet.document.mainSequence.nBlocks);
         setMainSequenceId(res.data.docSet.document.mainSequence.id);
@@ -323,7 +229,7 @@ const EditBlock = withStyles(styles)((props) => {
     blockNo,
     changeNo,
   ]);
-  if (result.data && result.data.docSet) {
+  if (result.data && result.data.docSet && editorContent.length > 0) {
     const title = (
       <div>
         <IconButton
@@ -348,8 +254,9 @@ const EditBlock = withStyles(styles)((props) => {
         </IconButton>
       </div>
     );
-    const content =
-      displayMode === 'write' ? (
+    return (
+      <>
+        {title}
         <Slate
           editor={slateEditor}
           value={editorContent}
@@ -358,29 +265,16 @@ const EditBlock = withStyles(styles)((props) => {
             setEditorContent(newValue);
           }}
         >
-          <Editable renderElement={renderElement} renderLeaf={renderLeaf}/>
+          <Editable
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+          />
         </Slate>
-      ) : (
-        <Typography
-          variant="body1"
-          className={classes.browseBlocksScriptureText}
-          onDoubleClick={handleDisplayChange}
-        >
-          {renderVersesItems(
-            blockContent ? aghast2items(string2aghast(blockContent)) : [],
-            props.state.selectedVerse.set,
-            props.state.renderMode.set
-          )}
-        </Typography>
-      );
-    return (
-      <>
-        {title}
-        {content}
       </>
     );
+  } else {
+    return <Typography variant="body1">No docSet selected</Typography>;
   }
-  return <Typography variant="body1">No docSet selected</Typography>;
 });
 
 export default EditBlock;
