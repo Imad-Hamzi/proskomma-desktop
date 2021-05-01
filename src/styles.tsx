@@ -166,19 +166,13 @@ const styles = (theme) => ({
   spanWJElement: {
     color: "#B00",
   },
-  editorStartMarkup: {
+  editorMarkup: {
     fontSize: 'small',
     fontWeight: 'normal',
     fontStyle: 'normal',
     color: '#444',
     paddingRight: '0.1em',
-  },
-  editorEndMarkup: {
-    fontSize: 'small',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    color: '#444',
-    paddingLeft: '0.2em',
+    paddingLeft: '0.1em',
   },
   cancelBlockEditButton: {
   },

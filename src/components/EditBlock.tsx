@@ -60,7 +60,13 @@ const items2slate = (items) => {
                 type: `span/${topTag}`,
                 children: [
                   {
-                    text: '',
+                    type: 'markup',
+                    elementText: `${topTag}<`,
+                    children: [
+                      {
+                        text: "",
+                      },
+                    ]
                   },
                   ...topStack,
                   {
@@ -69,8 +75,14 @@ const items2slate = (items) => {
                 ],
               },
               {
-                text: '',
-              }
+                type: 'markup',
+                elementText: '>',
+                children: [
+                  {
+                    text: '',
+                  },
+                ]
+              },
             );
           }
         }
@@ -133,11 +145,7 @@ const EditBlock = withStyles(styles)((props) => {
         {...props.attributes}
         className={classes[`span${tag.toUpperCase()}Element`]}
       >
-        <>
-          <span className={classes.editorStartMarkup}>{`${tag}<`}</span>
           {props.children}
-          <span className={classes.editorEndMarkup}>{`>`}</span>
-        </>
       </span>
     );
   });
@@ -164,7 +172,7 @@ const EditBlock = withStyles(styles)((props) => {
 
   const TokensLeaf = withStyles(styles)((props) => {
     return (
-      <span {...props.attributes} className={classes.tokensLeaf}>
+      <span {...props.attributes} className={classes[props.leaf.class || 'tokensLeaf']}>
         {props.children}
       </span>
     );
@@ -173,6 +181,9 @@ const EditBlock = withStyles(styles)((props) => {
   const renderElement = React.useCallback((props) => {
     if (props.element.type === 'block') {
       return <p {...props.attributes}>{props.children}</p>;
+    }
+    if (props.element.type === 'markup') {
+      return <span {...props.attributes}className={classes.editorMarkup}>{props.element.elementText}{props.children}</span>;
     }
     if (props.element.type.startsWith('span')) {
       return <SpanElement {...props} />;
@@ -193,7 +204,7 @@ const EditBlock = withStyles(styles)((props) => {
   const slateEditor = React.useMemo(() => withReact(createEditor()), []);
   slateEditor.isInline = (element) => element.type !== 'block';
   slateEditor.isVoid = (element) =>
-    ['chapter', 'verses'].includes(element.type);
+    ['chapter', 'verses', 'markup'].includes(element.type);
 
   React.useEffect(() => {
     const doQuery = async () => {
