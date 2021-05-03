@@ -15,6 +15,7 @@ const xre = require('xregexp');
 const items2slate = (items) => {  // Ignoring grafts, spanWithAtts, milestones and attributes
   const ret = [[]];
   const spans = [];
+  let atts = [];
   const closeCV = {
     chapter: null,
     verses: null,
@@ -53,6 +54,12 @@ const items2slate = (items) => {  // Ignoring grafts, spanWithAtts, milestones a
           } else if (scopeBits[0] === 'span') {
             ret.unshift([]);
             spans.unshift(scopeBits[1]);
+          } else if (scopeBits[0] === 'spanWithAtts') {
+            ret.unshift([]);
+            spans.unshift(scopeBits[1]);
+            atts = [];
+          } else if (scopeBits[0] === 'attribute') {
+            atts.push(scopeBits.slice(3));
           }
         } else {
           // end
@@ -93,6 +100,43 @@ const items2slate = (items) => {  // Ignoring grafts, spanWithAtts, milestones a
                 ],
               }
             );
+          } else if (scopeBits[0] === 'spanWithAtts') {
+            const topStack = ret.shift();
+            const topTag = spans.shift();
+            ret[0].push(
+              {
+                text: '',
+              },
+              {
+                type: `spanWithAtts/${topTag}`,
+                children: [
+                  {
+                    type: 'markup',
+                    elementText: `${topTag}[${atts.length}]<`,
+                    atts: atts,
+                    children: [
+                      {
+                        text: "",
+                      },
+                    ]
+                  },
+                  ...topStack,
+                  {
+                    text: '',
+                  },
+                ],
+              },
+              {
+                type: 'markup',
+                elementText: '>',
+                children: [
+                  {
+                    text: '',
+                  },
+                ],
+              }
+            );
+            atts = [];
           }
         }
         break;
@@ -235,7 +279,7 @@ const slate2items = (slate, toClose) => {
         processChapter(child);
       } else if (child.type === 'verses') {
         processVerses(child);
-      } else if (child.type.startsWith('span/')) {
+      } else if (child.type.startsWith('span')) {
         processSpan(child);
       }
     }
@@ -290,6 +334,18 @@ const EditBlock = withStyles(styles)((props) => {
     );
   });
 
+  const SpanWithAttsElement = withStyles(styles)((props) => {
+    const tag = props.element.type.split('/')[1];
+    return (
+      <span
+        {...props.attributes}
+        className={classes[`spanWithAtts${tag.toUpperCase()}Element`]}
+      >
+          {props.children}
+      </span>
+    );
+  });
+
   const ChapterElement = withStyles(styles)((props) => {
     return (
       <span {...props.attributes} className={classes.chapterElement}>
@@ -323,11 +379,29 @@ const EditBlock = withStyles(styles)((props) => {
       return <p {...props.attributes}>{props.children}</p>;
     }
     if (props.element.type === 'markup') {
-      return <span {...props.attributes}
-                   className={classes.editorMarkup}>{props.element.elementText}{props.children}</span>;
+      if (props.element.atts) {
+        return <span
+          {...props.attributes}
+          className={classes.editorMarkup}
+          data-atts={props.element.atts.map(att => att.join('/')).join(' ')}
+          onClick={(e, t) => console.log(e.target.getAttribute('data-atts'))}
+        >
+        {props.element.elementText}{props.children}
+      </span>
+      } else {
+        return <span
+          {...props.attributes}
+          className={classes.editorMarkup}
+        >
+        {props.element.elementText}{props.children}
+      </span>
+      };
     }
-    if (props.element.type.startsWith('span')) {
+    if (props.element.type.startsWith('span/')) {
       return <SpanElement {...props} />;
+    }
+    if (props.element.type.startsWith('spanWithAtts/')) {
+      return <SpanWithAttsElement {...props} />;
     }
     if (props.element.type === 'chapter') {
       return <ChapterElement {...props} />;
@@ -352,7 +426,7 @@ const EditBlock = withStyles(styles)((props) => {
       if (props.state.selectedDocument) {
         const editQuery = blocksQueryTemplate
           .replace(/%docSetId%/g, props.state.selectedDocSet.get)
-          .replace(/%bookCode%/g, props.state.selectedBook.get || 'MAT')
+          .replace(/%bookCode%/g, props.state.selectedBook.get || 'GEN')
           .replace(/%blockNo%/g, blockNo.toString());
         setQuery(editQuery);
         const res = await props.pk.gqlQuery(editQuery);
@@ -380,6 +454,7 @@ const EditBlock = withStyles(styles)((props) => {
       ` blockPosition: ${blockNo}` +
       ` items: ${object2Query(items)}) }`;
     const res = await props.pk.gqlQuery(query);
+    console.log(res);
     setChangeNo(changeNo + 1);
   }
 

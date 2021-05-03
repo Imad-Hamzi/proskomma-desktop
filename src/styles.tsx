@@ -166,6 +166,7 @@ const styles = (theme) => ({
   spanWJElement: {
     color: "#B00",
   },
+  spanWithAttsWElement: {},
   editorMarkup: {
     fontSize: 'small',
     fontWeight: 'normal',
