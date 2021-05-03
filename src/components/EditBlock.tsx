@@ -15,6 +15,10 @@ const xre = require('xregexp');
 const items2slate = (items) => {  // Ignoring grafts, spanWithAtts, milestones and attributes
   const ret = [[]];
   const spans = [];
+  const closeCV = {
+    chapter: null,
+    verses: null,
+  };
   let tokenPayloads = [];
   const maybePushTokens = () => {
     if (tokenPayloads.length > 0) {
@@ -36,6 +40,7 @@ const items2slate = (items) => {  // Ignoring grafts, spanWithAtts, milestones a
         const scopeBits = item.payload.split('/');
         if (item.subType === 'start') {
           if (['chapter', 'verses'].includes(scopeBits[0])) {
+            closeCV[scopeBits[0]] = null;
             ret[0].push({
               type: scopeBits[0],
               elementText: scopeBits[1],
@@ -51,7 +56,9 @@ const items2slate = (items) => {  // Ignoring grafts, spanWithAtts, milestones a
           }
         } else {
           // end
-          if (scopeBits[0] === 'span') {
+          if (['chapter', 'verses'].includes(scopeBits[0])) {
+            closeCV[scopeBits[0]] = scopeBits[1];
+          } else if (scopeBits[0] === 'span') {
             const topStack = ret.shift();
             const topTag = spans.shift();
             ret[0].push(
@@ -95,22 +102,25 @@ const items2slate = (items) => {  // Ignoring grafts, spanWithAtts, milestones a
   }
   maybePushTokens();
   return [
-    {
-      type: 'block',
-      children: [
-        {
-          text: '',
-        },
-        ...ret[0],
-        {
-          text: '',
-        },
-      ],
-    },
+    [
+      {
+        type: 'block',
+        children: [
+          {
+            text: '',
+          },
+          ...ret[0],
+          {
+            text: '',
+          },
+        ],
+      },
+    ],
+    closeCV
   ];
 };
 
-const slate2items = slate => {
+const slate2items = (slate, toClose) => {
   const ret = [];
   let verses = null;
   let chapter = null;
@@ -133,6 +143,13 @@ const slate2items = slate => {
     ret.push({
       type: 'scope',
       subType: 'start',
+      payload: `chapter/${ch}`
+    });
+  }
+  const closeChapter = (ret, ch) => {
+    ret.push({
+      type: 'scope',
+      subType: 'end',
       payload: `chapter/${ch}`
     });
   }
@@ -183,8 +200,8 @@ const slate2items = slate => {
     );
   }
   const processChapter = child => { // To do this properly we need to look at open scopes
-      openChapter(ret, child.elementText);
-      chapter = child.elementText;
+    openChapter(ret, child.elementText);
+    chapter = child.elementText;
   }
   const processVerses = child => {
     if (verses) {
@@ -224,6 +241,12 @@ const slate2items = slate => {
     }
   }
   slate2items1(slate.[0].children.filter(c => !isEmptyString(c)));
+  if (toClose.verses) {
+    closeVerseRange(ret, toClose.verses);
+  }
+  if (toClose.chapter) {
+    closeChapter(ret, toClose.chapter);
+  }
   return ret;
 }
 
@@ -234,6 +257,7 @@ const EditBlock = withStyles(styles)((props) => {
   const [blockNo, setBlockNo] = React.useState(0);
   const [nBlocks, setNBlocks] = React.useState(0);
   const [editsUnsaved, setEditsUnsaved] = React.useState(false);
+  const [toClose, setToClose] = React.useState({chapter: null, verses: null});
   const [editorContent, setEditorContent] = React.useState([
     {
       type: 'block',
@@ -241,14 +265,12 @@ const EditBlock = withStyles(styles)((props) => {
     },
   ]);
   const [changeNo, setChangeNo] = React.useState(0);
-  const [mainSequenceId, setMainSequenceId] = React.useState('');
   const blocksQueryTemplate =
     '{\n' +
     '  docSet(id:"%docSetId%") {\n' +
     '    document(bookCode: "%bookCode%") {\n' +
     '      title: header(id: "toc2")\n' +
     '      mainSequence {\n' +
-    '        id' +
     '        nBlocks' +
     '        blocks(positions: [%blockNo%]) { items { type subType payload } }\n' +
     '      }\n' +
@@ -335,11 +357,10 @@ const EditBlock = withStyles(styles)((props) => {
         setQuery(editQuery);
         const res = await props.pk.gqlQuery(editQuery);
         setResult(res);
-        setEditorContent(
-          items2slate(res.data.docSet.document.mainSequence.blocks[0].items)
-        );
+        const [items, closeCV] = items2slate(res.data.docSet.document.mainSequence.blocks[0].items);
+        setEditorContent(items);
+        setToClose(closeCV);
         setNBlocks(res.data.docSet.document.mainSequence.nBlocks);
-        setMainSequenceId(res.data.docSet.document.mainSequence.id);
       }
     };
     doQuery();
@@ -351,17 +372,14 @@ const EditBlock = withStyles(styles)((props) => {
   ]);
 
   const submitBlock = async () => {
-    const items = slate2items(editorContent);
-    // console.log(JSON.stringify(items, null, 2));
+    const items = slate2items(editorContent, toClose);
     const object2Query = obs => '[' + obs.map(ob => `{type: "${ob.type}" subType: "${ob.subType}" payload: "${ob.payload}"}`).join(', ') + ']';
     let query = `mutation { updateItems(` +
       `docSetId: "${props.state.selectedDocSet.get}"` +
       ` documentId: "${props.state.selectedDocument.get}"` +
-      ` sequenceId: "${mainSequenceId}"` +
       ` blockPosition: ${blockNo}` +
       ` items: ${object2Query(items)}) }`;
     const res = await props.pk.gqlQuery(query);
-    console.log(res);
     setChangeNo(changeNo + 1);
   }
 
