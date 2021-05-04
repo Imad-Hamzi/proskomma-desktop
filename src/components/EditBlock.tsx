@@ -395,7 +395,7 @@ const EditBlock = withStyles(styles)((props) => {
         >
         {props.element.elementText}{props.children}
       </span>
-      };
+      }
     }
     if (props.element.type.startsWith('span/')) {
       return <SpanElement {...props} />;
