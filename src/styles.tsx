@@ -139,7 +139,47 @@ const styles = (theme) => ({
   inspectQuery: {
     float: "right",
     marginLeft: "10px",
-  }
+  },
+  chapterElement: {
+    backgroundColor: "#EEE",
+    paddingLeft: "0.2em",
+    paddingRight: "0.2em",
+    marginRight: "0.4em",
+  },
+  versesElement: {
+    backgroundColor: "#EEE",
+    fontSize: "smaller",
+    fontWeight: "bold",
+    paddingLeft: "0.2em",
+    paddingRight: "0.2em",
+    marginRight: "0.4em",
+  },
+  spanBElement: {
+    fontWeight: "bold",
+  },
+  spanIElement: {
+    fontStyle: "italic",
+  },
+  spanQSElement: {
+    fontStyle: "italic",
+  },
+  spanWJElement: {
+    color: "#B00",
+  },
+  spanWithAttsWElement: {},
+  editorMarkup: {
+    fontSize: 'small',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    color: '#444',
+    paddingRight: '0.1em',
+    paddingLeft: '0.1em',
+  },
+  cancelBlockEditButton: {
+  },
+  submitBlockEditButton: {
+    float: "right",
+  },
 });
 
 export default styles;

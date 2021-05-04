@@ -20,6 +20,7 @@ import DocSets from './tabs/DocSets';
 import Browse from './tabs/Browse';
 import Search from './tabs/Search';
 import EditBlock from './tabs/Edit';
+import Alignment from './tabs/Alignment';
 import VerseMapping from './tabs/VerseMapping';
 import PkQuery from './tabs/PkQuery';
 import icon from '../assets/icons/48x48.ico';
@@ -166,12 +167,19 @@ export default function App() {
           maximized={maximized}
         />
         <AppBar position="static">
-          <Tabs value={tabN} onChange={onTabChange}>
+          <Tabs
+            value={tabN}
+            onChange={onTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs"
+          >
             <Tab label="DocSets" />
             <Tab label="Browse" />
             <Tab label="Search" />
             <Tab label="Edit" />
-            <Tab label={"Verse Mapping"} />
+            <Tab label="Alignment" />
+            <Tab label="Mapping" />
             <Tab label="Raw Query" />
           </Tabs>
         </AppBar>
@@ -182,8 +190,9 @@ export default function App() {
           {tabN === 1 && <Browse pk={pk} state={state} />}
           {tabN === 2 && <Search pk={pk} state={state} />}
           {tabN === 3 && <EditBlock pk={pk} state={state} />}
-          {tabN === 4 && <VerseMapping pk={pk} state={state} />}
-          {tabN === 5 && <PkQuery pk={pk} state={state} />}
+          {tabN === 4 && <Alignment pk={pk} state={state} />}
+          {tabN === 5 && <VerseMapping pk={pk} state={state} />}
+          {tabN === 6 && <PkQuery pk={pk} state={state} />}
         </Container>
         <Footer />
       </div>

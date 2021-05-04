@@ -260,12 +260,14 @@
     "proskomma": "^0.4.25",
     "proskomma-utils": "^0.4.14",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "react-tabs": "^3.1.2",
     "regenerator-runtime": "^0.13.5",
+    "slate": "^0.62.0",
+    "slate-react": "^0.62.0",
     "source-map-support": "^0.5.19",
-    "uw-proskomma": "^0.4.13"
+    "uw-proskomma": "^0.4.18"
   },
   "devEngines": {
     "node": ">=10.x",
